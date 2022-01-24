@@ -1,0 +1,40 @@
+<div [class.inline-loader]="config.inline" 
+    [ngClass]="('ajax-loader ' + config.classNames )" 
+    class="positionRelative" 
+    *ngIf="canShow===true">
+    <!-- <p> loaderId :: {{ loaderId }} :: {{canShow}} </p> -->
+
+    <!-- backdrop overlay screen -->
+   <!--  <div class="backdrop"></div> -->
+
+    <!-- progress content -->
+    <div class="progressContainer" *ngIf="requestStates.PROGRESS === currentState">
+        <pure-loader message='Loading'></pure-loader>
+    </div>
+
+    <!-- error content -->
+    <div class="errorContainer" *ngIf="requestStates.ERROR === currentState || requestStates.CANCELED === currentState">
+        <div class="close-icon">
+            <i class="fa fa-times" (click)="close()"></i>
+        </div>
+        <p class="pull-left mar0">
+            <span>
+                <i class="far exclamation-triangle"></i>
+            </span>
+            {{ statusMessage || (config.errorText + ':' + loaderId) }}
+        </p>
+    </div>
+
+    <!-- success content -->
+    <div class="successContainer" *ngIf="requestStates.SUCCESS === currentState">
+        <div class="close-icon">
+            <i class="fa fa-times" (click)="close()"></i>
+        </div>
+        <p class="pull-left mar0">
+            <i class="far fa-check-circle"></i>
+            <span> {{config.successText}} </span>
+        </p>
+    </div>
+
+
+</div>
