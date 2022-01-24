@@ -1,0 +1,131 @@
+.header {
+    height: 50px;
+    width: 100%;
+    background: #474747;
+    display: flex;
+    justify-content: space-between;
+}
+
+.logo span {
+    color: #fff;
+    position: relative;
+    font-size: 14px;
+    top: 18px;
+    left: 16px;
+    opacity: 0.95;
+}
+
+.logo a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.flashContainer {
+    display: table;
+    padding-top: 75px;
+    display: table;
+    margin: auto;
+    cursor: pointer;
+}
+
+.flashArrayButton {
+    position: relative;
+    width: 265px;
+    border-radius: 6px;
+    border: 1px solid #FE5000;
+    display: table-cell;
+    vertical-align: middle;
+    height: 220px;
+    text-align: center;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.flashRestoreButton {
+    position: relative;
+    width: 265px;
+    border-radius: 6px;
+    border: 1px solid #FE5000;
+    display: table-cell;
+    vertical-align: middle;
+    height: 220px;
+    text-align: center;
+    margin-right: 10px;
+}
+.material-icons {
+    color: #FE5000;
+    position: absolute;
+    right: 20px;
+    bottom: 10px;
+    transform: rotate(0deg);
+    font-size: 20px;
+}
+
+.flashArrayButton:hover {
+    position: relative;
+    width: 265px;
+    border-radius: 6px;
+    border: 1px solid #FE5000;
+    background: #FE5000;
+    display: table-cell;
+    vertical-align: middle;
+    height: 220px;
+    text-align: center
+}
+
+.flashArrayButton .image {
+    content: url('../../assets/images/flasharray-normal-logo.png');
+    margin: auto;
+}
+
+.flashArrayButton:hover .image {
+    content: url('../../assets/images/flasharray-hover-logo.png');
+    margin: auto;
+}
+
+.flashArrayButton:hover .material-icons {
+    color: #fff !important;
+    position: absolute;
+    right: 20px;
+    bottom: 10px;
+    transform: rotate(0deg);
+    font-size: 20px;
+}
+
+.flashRestoreButton:hover {
+    position: relative;
+    width: 265px;
+    border-radius: 6px;
+    border: 1px solid #FE5000;
+    background: #FE5000;
+    display: table-cell;
+    vertical-align: middle;
+    height: 220px;
+    text-align: center
+}
+
+.flashRestoreButton .image {
+    content: url('../../assets/images/pure-flashrecover-logo.png');
+    margin: auto;
+}
+
+.flashRestoreButton:hover .image {
+    content: url('../../assets/images/pure-flashrecover-cohesity-Logo-hover.png');
+    margin: auto;
+}
+
+.flashRestoreButton:hover .material-icons {
+    color: #fff !important;
+    position: absolute;
+    right: 20px;
+    bottom: 10px;
+    transform: rotate(0deg);
+    font-size: 20px;
+}
+
+.tileWrapper {
+    display: flex;
+    justify-content: space-evenly;
+    height: calc(100vh - 50px);
+    align-items: center;
+}
