@@ -1,3 +1,9 @@
+/*
+*  Copyright 2017-18, MapleLabs, All Rights Reserved.
+*
+*/
+
+
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 

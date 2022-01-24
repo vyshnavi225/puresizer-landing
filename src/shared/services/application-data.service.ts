@@ -1,3 +1,8 @@
+/*
+*  Copyright 2018-19, MapleLabs, All Rights Reserved.
+*/
+
+
 import { Injectable, EventEmitter } from '@angular/core';
 
 export interface IAppDataChagneEvent {
