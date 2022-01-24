@@ -1,9 +1,3 @@
-/*
-*  Copyright 2017-18, MapleLabs, All Rights Reserved.
-*
-*/
-
-
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse, HttpResponse } from '@angular/common/http';
