@@ -1,9 +1,4 @@
 import { Injectable, EventEmitter } from '@angular/core';
-// import { Observable } from 'rxjs/Observable';
-// import { ISubscription } from 'rxjs/Subscription';
-// import { HttpResponse } from '@angular/common/http';
-
-
 
 @Injectable()
 export class ActiveXHRsListService {
