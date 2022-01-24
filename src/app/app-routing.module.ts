@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { LandingComponent } from './landing/landing.component';
 import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
@@ -8,8 +9,12 @@ const routes: Routes = [
     component: LoginComponent,
   },
   {
+    path: 'landing',
+    component: LandingComponent,
+  },
+  {
     path: '**',
-    redirectTo: '/login'
+    redirectTo: '/landing'
   }
 ];
 
