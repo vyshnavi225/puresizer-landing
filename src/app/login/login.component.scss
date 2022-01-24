@@ -1,0 +1,144 @@
+input:focus ~ .floating-label,
+input:not(:focus):valid ~ .floating-label{
+  	top: -5px;
+	bottom: 10px;
+	left: 1px;
+	font-size: 11px;
+	opacity: 1;
+	color: #4e55fd;
+
+}
+input:focus{
+	border-bottom: 1px solid #4e55fd !important;
+}
+
+.inputText {
+    font-size: 13px;
+	width: 100%;
+	outline: none;
+	height: 40px;
+	border-bottom: 1px solid #ddd !important;
+	border: 0px;
+	background: transparent;
+}
+.text_center a:hover{
+	text-decoration: none;
+	color: #4e55fd;
+}
+.floating-label {
+  position: absolute;
+  pointer-events: none;
+  left: 1px;
+  top: 15px;
+  transition: 0.2s ease all;
+} 
+.copyright{
+	font-size: 12px;
+    position: fixed;
+    bottom: 15px;
+	left: 5px;
+    letter-spacing: 0.5px;
+}
+.rightSec{
+	background: #fff;
+	padding: 30px 5%;
+	position: relative;
+}
+.loginSection{
+	position: relative;
+	transform: translateY(-45%);
+	top: 45%;
+	margin: auto;
+	font-family: Inter-SemiBold;
+	width: 12%;
+}
+.errorMessage{
+	color: #dc3545;
+	padding-top: 5px;
+}
+.signBtn{
+	color: #fff;
+	border: 0px;
+	cursor: pointer;
+	text-align: center;
+	background: #fe5000;
+	padding: 10px;
+	letter-spacing: 0.5px;
+	width: 100%;
+	border-radius: 3px;
+	position: relative;
+	left: 5px;
+}
+.signBtn:active, .signBtn:focus {
+	outline: none;
+	border: none;
+}
+.fa-circle {
+	font-size: 7px;
+    position: relative;
+    bottom: 2px;
+    color: #fe5000;
+    border: #fff;
+    border-radius: 100%;
+    border: 3px solid #fff;
+}
+.or_line hr {
+	border-top: 1px solid #fe5000;
+}
+.or_line span {
+	position: absolute;
+    top: 6px;
+    left: 48%;
+}
+.bgImg{
+	background: url(/assets/images/pure_storage_background.png);
+    width: 100%;
+    height: 100%;
+    opacity: 0.9;
+    background-size: 100%;
+    position: absolute;
+    bottom: 0px;
+}
+.bottonSection{
+	position: fixed;
+	bottom: 20px;
+	padding: 10px 30px;
+}
+.loginSection h4{
+	 font-size: 26px;
+	 font-family: Roboto-Medium;
+	 color: #000;
+}
+.loginSection h5{
+	 font-size: 20px;
+	 font-family: Roboto-Medium;
+	 color: #000;
+}
+
+.disabled-btn {
+	background: #f5f5f5;
+	opacity: 0.7;
+	color: #736a6a;
+	border: 1px solid #b8c1c6;
+	cursor: not-allowed;
+}
+.horizontal-divider{
+	width: 100%;
+    text-align: center;
+    border-bottom: 1px solid #fe5000;
+    line-height: 0.1em;
+    height: 1px;
+    margin: 0 auto;
+    margin-top: 30px;
+}
+.horizontal-divider span {
+    padding: 0 10px;
+    font-size: 14px;
+    font-weight: normal;
+}
+.assessmentLogin{
+	font-size: 13px;
+    position: relative;
+    left: 2px;
+    padding-bottom: 14px;
+}

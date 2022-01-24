@@ -1,0 +1,144 @@
+.progressContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 80;
+
+}
+
+.errorContainer, .successContainer {
+    background-color: #fafafa;
+    padding: 15px 10px 10px 10px;
+    width: 400px;
+    position: absolute;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    box-shadow: 0px 1px 5px #ccc;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    z-index: 80;
+    left: 50%;
+    /*margin-top: 15%; */
+    /*max-height: 600px;*/
+    overflow: auto;
+}
+
+/*.backdrop{
+    display: none;
+}*/
+
+.errorContainer p {
+    color: #ff3333;
+    padding: 10px;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 0px;
+    word-wrap: break-word;
+    width: 100%;
+}
+
+.successContainer p {
+    color: #000000;
+    padding: 10px;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 7px;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.errorContainer span, .successContainer span {
+    padding-right: 8px;
+}
+
+.inline-loader .errorContainer, .inline-loader .successContainer {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    text-align: center;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 0px;
+    margin: 0px;
+}
+
+.inline-loader .errorContainer p.mar0, .inline-loader .successContainer p.mar0 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 95%;
+}
+
+.inline-loader .errorContainer p {
+    font-size: 12px;
+}
+
+.inline-loader .errorContainer img, .inline-loader .successContainer img {
+    width: 17px;
+}
+
+.loadingCongif .inlineText {
+    display: block;
+}
+
+.inline-loader .inlineText {
+    display: inline;
+}
+
+.err {
+    height: 100%;
+    width: 100%;
+}
+
+.err img {
+    width: 17px;
+    position: relative;
+    top: -1px;
+}
+
+.errorMsg {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    text-align: center;
+}
+
+.ajax-loader {
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    z-index: 40;
+    position: absolute;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+/*.backdrop{
+    background-color: rgba(255,255,255, 0.5);
+    position: fixed;
+    width: 100%;
+    margin:0px;
+    padding: 0px;
+    height: 100%;
+    z-index: 1;
+}*/
+
+.close-icon {
+    cursor: pointer;
+    position: absolute;
+    right: 7px;
+    top: 3px;
+}
+
+.txt-center {
+    text-align: center;
+}
