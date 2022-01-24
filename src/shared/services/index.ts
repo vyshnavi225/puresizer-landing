@@ -9,6 +9,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 // import { CookieService } from 'ngx-cookie-service';
 
 // Application Services
+import { UtilService } from './util.service';
 import { ApplicationDataService } from './application-data.service';
 
 
@@ -23,6 +24,7 @@ export class SharedServicesModule {
                 // CookieService,
 
                 // Application services
+                UtilService,
                 ApplicationDataService
             ]
         };
