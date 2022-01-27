@@ -1,0 +1,114 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    "projects/**/*"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.ts"
+      ],
+      "parserOptions": {
+        "project": [
+          "tsconfig.json"
+        ],
+        "createDefaultProgram": true
+      },
+      "extends": [
+        "plugin:@angular-eslint/recommended",
+        "plugin:@angular-eslint/template/process-inline-templates"
+      ],
+      "rules": {
+        "no-console": [
+          "error",
+          {
+            "allow": [
+              "error"
+            ]
+          }
+        ],
+        "max-len": [
+          "error",
+          140
+        ],
+        "quotes": [
+          "error",
+          "single"
+        ],
+        "semi": [
+          "error",
+          "always"
+        ],
+        "no-trailing-spaces": "error",
+        "comma-dangle": "error",
+        "camelcase": [
+          "error",
+          {
+            "properties": "never"
+          }
+        ],
+        "no-irregular-whitespace": 2,
+        "valid-jsdoc": "error",
+        "arrow-body-style": [
+          "error",
+          "as-needed"
+        ],
+        "eqeqeq": [
+          "error",
+          "always"
+        ],
+        "no-empty": "error",
+        "no-extra-semi": "error",
+        "no-floating-decimal": "error",
+        "no-implicit-globals": "error",
+        "no-shadow": [
+          "error",
+          {
+            "hoist": "never"
+          }
+        ],
+        "one-var-declaration-per-line": [
+          "error"
+        ],
+        "radix": "error",
+        "eol-last": [
+          "error",
+          "always"
+        ],
+        "no-whitespace-before-property": "error",
+        "@typescript-eslint/explicit-function-return-type": [
+          "error",
+          {
+            "allowExpressions": true
+          }
+        ],
+        "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 0 }],
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "prefix": "app",
+            "style": "kebab-case",
+            "type": "element"
+          }
+        ],
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "prefix": "app",
+            "style": "camelCase",
+            "type": "attribute"
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "*.html"
+      ],
+      "extends": [
+        "plugin:@angular-eslint/template/recommended"
+      ],
+      "rules": {}
+    }
+  ]
+}

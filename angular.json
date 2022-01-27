@@ -103,9 +103,21 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
-  "defaultProject": "puresizer-landing"
+  "defaultProject": "puresizer-landing",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }
