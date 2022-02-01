@@ -1,8 +1,5 @@
 # IDE files
 .idea/
-*.json
-# UI files
-sizer/webapps/src/environments/environment.ts
 
 # Log files
 *.log*
@@ -15,13 +12,3 @@ sizer/webapps/src/environments/environment.ts
 # Migration files
 /core/migrations/**
 /env_setup/migrations/**
-
-# File types
-*.png
-*.exe
-*.csv
-*.pptx
-*.pdf
-
-# Binary files
-go_refactor_script*
