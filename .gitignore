@@ -1,46 +1,27 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+# IDE files
+.idea/
+*.json
+# UI files
+sizer/webapps/src/environments/environment.ts
 
-# compiled output
-/dist
-/tmp
-/out-tsc
-# Only exists if Bazel was run
-/bazel-out
+# Log files
+*.log*
+!/logs/app_logs/.keep
+!/logs/server_logs/.keep
 
-# dependencies
-/node_modules
+# Compiled files
+*.pyc
 
-# profiling files
-chrome-profiler-events*.json
+# Migration files
+/core/migrations/**
+/env_setup/migrations/**
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+# File types
+*.png
+*.exe
+*.csv
+*.pptx
+*.pdf
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
-
-# misc
-/.angular/cache
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
-/typings
-
-# System Files
-.DS_Store
-Thumbs.db
+# Binary files
+go_refactor_script*
