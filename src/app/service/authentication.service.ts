@@ -10,9 +10,9 @@ import { ApplicationDataService, APP_DATA_KEYS } from '../../shared/services/app
 @Injectable()
 export class AuthenticationService extends RestService {
 
-  /* protected baseUrl = environment.http.baseUrl;
+  protected baseUrl = environment.http.baseUrl;
   protected queryName = 'AUTHENTICATION';
-  protected ajaxLoaderEnabled = true; */
+  protected ajaxLoaderEnabled = true;
 
   userInfo$ : BehaviorSubject<any> = new BehaviorSubject('');
 
@@ -44,21 +44,25 @@ export class AuthenticationService extends RestService {
     });
   } */
 
-  redirectToLogin(hasUnAuthorizedError: boolean = false) {
+  redirectToLogin(hasUnAuthorizedError: boolean = false): void {
     this.clearApplicationData();
     this.applicationDataService.setAppData(APP_DATA_KEYS.HAS_UNAUTHORIZED_ERROR, hasUnAuthorizedError);
     this.router.navigate(['/login']);
   }
 
-  getUserInfo() {
+  getUserInfo(): Observable<any> {
     const url = `${this.baseUrl}/userinfo`;
     return this.get({url}, null, 'GET_USER_INFO');
   }
 
-  private clearApplicationData() {
+  getLandingInfo(){
+    const url = `${this.baseUrl}/landing/appaccess`;
+    return this.get({url}, null, '');
+  }
+
+  private clearApplicationData(): void {
     this.applicationDataService.deleteAppData();
     this.applicationDataService.deleteStorageData();
   }
 
 }
-

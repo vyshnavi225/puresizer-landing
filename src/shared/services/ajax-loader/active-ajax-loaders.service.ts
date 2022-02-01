@@ -42,12 +42,12 @@ export class ActiveAjaxLoadersService {
         });
     }
 
-    public getXHRStateChangeEvent() {
+    public getXHRStateChangeEvent(): EventEmitter<any> {
         return this.xhrStateChangeEvent;
     }
 
     // add or updates the loader with the current request state
-    public updateLoaderState(loaderId: string, requestCurrentState: XHR_REQUEST_STATE, eventData = null) {
+    public updateLoaderState(loaderId: string, requestCurrentState: XHR_REQUEST_STATE, eventData = null): void {
         const requestPrevState = this.activeAjaxLoaders[loaderId];
         // if the loader is not there or laoder state is updated, then add/update the loader state
         // emit the change event, so that the listener will represent the change
@@ -62,11 +62,11 @@ export class ActiveAjaxLoadersService {
         }
     }
 
-    private deleteLoader(xhrLoaderId: string) {
+    private deleteLoader(xhrLoaderId: string): void {
         delete this.activeAjaxLoaders[xhrLoaderId];
     }
 
-    private emitXHRStateChangeEvent(xhrLoaderId: string, xhrState: XHR_REQUEST_STATE, eventData: any) {
+    private emitXHRStateChangeEvent(xhrLoaderId: string, xhrState: XHR_REQUEST_STATE, eventData: any): void {
         const eventObj: IXHRStateChangeEventData = {
             id: xhrLoaderId,
             state: xhrState,

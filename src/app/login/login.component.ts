@@ -9,30 +9,30 @@ import { environment } from 'src/environments/environment';
 })
 export class LoginComponent implements OnInit {
 
-  loginHeight = window.innerHeight;
+  loginHeight: number = window.innerHeight;
   errorMessage: string;
-  isProd = false;
+  isProd: boolean = false;
 
   constructor(
-    private authenticationService: AuthenticationService,
+    private authenticationService: AuthenticationService
   ) { }
 
 
   @HostListener('window:resize')
-  onResizeLoginHeight() {
+  onResizeLoginHeight(): void {
     this.loginHeight = window.innerHeight;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (environment.production) {
       this.isProd = true;
     }
   }
 
-  public oktaLogin() {
+  public oktaLogin(): void {
     /* this.authenticationService.oktaLogin().subscribe( (res: {redirect_url: string}) => {
       // redirecting user to okta login page
       window.location.href = res.redirect_url;
     } );*/
-  } 
+  }
 }

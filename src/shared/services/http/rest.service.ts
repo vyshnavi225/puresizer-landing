@@ -5,19 +5,19 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class RestService {
 
-     protected baseUrl = 'rest_url';
-     protected queryName = 'REST_SERVICE_NAME_PREFIX';
-     protected headers = {};
-     protected ajaxLoaderEnabled = false;
+    protected baseUrl: string = 'rest_url';
+    protected queryName: string = 'REST_SERVICE_NAME_PREFIX';
+    protected headers: {} = {};
+    protected ajaxLoaderEnabled: boolean = false;
 
-    constructor(private httpService: HttpService) {}
+    constructor(private httpService: HttpService) { }
 
-    private getDefaultConfig(requestMethod, queryParams, queryPrefix, loaderId, config: any= {}) {
+    private getDefaultConfig(requestMethod: any, queryParams: any, queryPrefix: any, loaderId: any, config: any = {}): any {
         const headers = this.ajaxLoaderEnabled ? {
             ...this.headers,
             ...config.headers,
             ajax_loader: loaderId ? loaderId : `${queryPrefix}_${this.queryName}`
-        } : {...this.headers, ...config.headers};
+        } : { ...this.headers, ...config.headers };
 
         return {
             ...config,
@@ -39,7 +39,7 @@ export class RestService {
         }
         const pattern = /{{.*?}}/g;
         const result: string[] = url.match(pattern);
-        result.forEach( match => {
+        result.forEach(match => {
             // replacing curly braces '{'  & '}'
             const propName = match.replace(/{|}/g, '');
             const isOptionalParam = propName.indexOf('?') !== -1;
@@ -56,14 +56,14 @@ export class RestService {
             }
             // replacing trailing '/'
             url = url.replace(/\/$/, '');
-        } );
+        });
         return url;
     }
 
     getUrl(pathParams, reqMethod?: string): string {
         if (pathParams) {
             let url = pathParams.url || this.baseUrl;
-            if ( this.hasDynamicPathParams(url) ) {
+            if (this.hasDynamicPathParams(url)) {
                 return this.getComputedtedUrl(url, pathParams);
             } else if (pathParams.props && pathParams.props.length) {
                 pathParams.props.forEach(propName => {
@@ -75,7 +75,7 @@ export class RestService {
             } else {
                 return url;
             }
-        } else if ( this.hasDynamicPathParams(this.baseUrl) ) {
+        } else if (this.hasDynamicPathParams(this.baseUrl)) {
             return this.getComputedtedUrl(this.baseUrl, {});
         } else {
             return this.baseUrl;

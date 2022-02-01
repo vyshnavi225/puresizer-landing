@@ -1,11 +1,11 @@
 export class AjaxLoaderOptions {
-    inline = false;
-    hideOnProgress = false;
-    hideOnError = false;
-    hideOnSuccess = true;
-    hideOnCanceled = true;
-    progressText = 'Please wait, request is in progress... ';
-    successText = 'API Call is processed... ';
-    errorText = 'Unknown Error in API call... ';
-    classNames = '';
+    inline: boolean = false;
+    hideOnProgress: boolean = false;
+    hideOnError: boolean = false;
+    hideOnSuccess: boolean = true;
+    hideOnCanceled: boolean = true;
+    progressText: string = 'Please wait, request is in progress... ';
+    successText: string = 'API Call is processed... ';
+    errorText: string = 'Unknown Error in API call... ';
+    classNames: string = '';
 }
