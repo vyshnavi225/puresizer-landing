@@ -74,20 +74,17 @@ if DEV_ENVIRONMENT == "yes":
     REDIRECT_URL = "http%3A%2F%2F127.0.0.1%3A8001%2Flogin%2Fokta"
     APP_URL = "https://dev-601430.okta.com/oauth2/default/v1"
 
-    LOGIN_REDIRECT_ADDR = (
-        "http://localhost:8080/#/opportunities/fr-sizer/#/opportunities"
-    )
-    LOGOUT_REDIRECT_ADDR = "http://localhost:8080/#/opportunities/fr-sizer/#/login"
+    LOGIN_REDIRECT_ADDR = "http://127.0.0.1:8000/landing-static/index.html"
 
-    SERVER_ADDRESS = "localhost"
-    PORT = "8080"
+    LOGOUT_REDIRECT_ADDR = "http://127.0.0.1:8000/landing/login"
+
+    SERVER_ADDRESS = "127.0.0.1"
+    PORT = "8000"
 
 else:
     DEV_SIZER = False
     CLIENT_ID = "0oa1i20ucvrIJrham1d8"
-    REDIRECT_URL = (
-        "https%3A%2F%2Fdev%2Dfa%2Dsizer%2Esalestools%2Epurestorage%2Ecom%2Flogin%2Fokta"
-    )
+    REDIRECT_URL = "https%3A%2F%2Fdev%2Dfa%2Dsizer%2Esalestools%2Epurestorage%2Ecom%2Flanding%2Flogin%2Fokta"
     APP_URL = "https://purestorage.okta.com/oauth2/v1"
 
     LOGIN_REDIRECT_ADDR = "https://dev-fa-sizer.salestools.purestorage.com/#/scenario"

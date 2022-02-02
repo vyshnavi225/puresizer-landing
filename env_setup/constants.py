@@ -37,3 +37,8 @@ class Constants(object):
     CHANGE = "change"
     ACCESS = "access"
     DELETE = "delete"
+
+    # Apps
+    FR_SIZER = 'fr-sizer'
+    FA_SIZER = 'fa-sizer'
+    FB_SIZER = 'fb-sizer'

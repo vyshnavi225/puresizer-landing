@@ -98,7 +98,6 @@ class BaseView(APIView):
         self.role = 'user'
         self.platform = Constants.LOCAL
         self.user_email = 'user@purestorage.com'
-        self.app_access = ['fb-sizer', 'fr-sizer', 'fa-sizer']
 
     def dispatch(self, request, *args, **kwargs):
         # if settings.LOGIN_EXEMPT_URLS
@@ -224,6 +223,14 @@ class OktaAuthView(APIView):
         except ObjectDoesNotExist:
             user = create_okta_user(username, access_token, id_token, seconds)
 
+            # Give access to fa-sizer by default
+            try:
+                AppAccess.objects.get(username=username, app=Constants.FA_SIZER)
+            except ObjectDoesNotExist as e:
+                logger.error('No app access for user {}. Now provided.'.format(username))
+                app_access = AppAccess.objects.create(username=username, app=Constants.FA_SIZER)
+                app_access.save()
+
         logger.info(model_to_dict(user))
         user.save()
 
@@ -258,8 +265,8 @@ class AppAccessAPI(BaseView):
 
         # user_data = request.COOKIES.get('user_data', None)
         # user_data = signing.loads(user_data)
-
         # Get the apps that the logged in user can access
+
         access_apps = {obj.app: env.APP_URLS[obj.app] for obj in AppAccess.objects.filter(username=self.username)}
 
         return Response({'status': 'success',
@@ -283,16 +290,22 @@ class AppAccessAPI(BaseView):
         username = serializer.data['username']  # Username of the user to be given access to
         app = serializer.data['app']  # app
 
+        try:
+            User.objects.get(username=username)
+        except ObjectDoesNotExist as e:
+            logger.error(f'Username does not exist{e}')
+            return Response({'status': 'error',
+                             'error_msg': 'Username does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+
         if len(AppAccess.objects.filter(username=username, app=app)) != 0:
             return Response({'status': 'error',
-                             'error_msg': 'The user already has access to the app.'}, status=status.HTTP_400_BAD_REQUEST)
+                             'error_msg': 'The user already has access to the app.'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         app_access = AppAccess.objects.create(username=username, app=app)
         app_access.save()
 
-        return Response({'status': 'success',
-                         'error_msg': f'Access granted to user "{username}" for app "{app}"'},
-                        status=status.HTTP_200_OK)
+        return Response({'status': 'success'}, status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
 
@@ -312,6 +325,13 @@ class AppAccessAPI(BaseView):
         username = serializer.data['username']
         app = serializer.data['app']
 
+        try:
+            User.objects.get(username=username)
+        except ObjectDoesNotExist as e:
+            logger.error(f'Username does not exist{e}')
+            return Response({'status': 'error',
+                             'error_msg': 'Username does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
         if len(AppAccess.objects.filter(username=username, app=app)) == 0:
             return Response({'status': 'error',
                              'error_msg': 'The user doesnt have access to the app.'},
@@ -319,9 +339,7 @@ class AppAccessAPI(BaseView):
 
         AppAccess.objects.filter(username=username, app=app).delete()
 
-        return Response({'status': 'success',
-                         'error_msg': f'Access for app "{app}" revoked for user "{username}"'},
-                        status=status.HTTP_200_OK)
+        return Response({'status': 'success'}, status=status.HTTP_200_OK)
 
 
 class LoginAuthView(APIView):
@@ -390,7 +408,6 @@ class LocalAuthView(LoginAuthView):
             'platform': user_obj.platform,
             'access_token': user_obj.access_token,
             'role': user_obj.role,
-            'app_access': access_apps
         }
         response = HttpResponseRedirect('/landing/index.html')
         response.set_cookie(
@@ -417,7 +434,6 @@ class GetVersion(BaseView):
 
 class GetUserDetail(BaseView):
     def get(self, _):
-
         return Response({'name': self.username,
                          'role': self.role,
                          'platform': self.platform}, status=status.HTTP_200_OK)
