@@ -13,7 +13,7 @@ export class AjaxLoaderComponent implements OnInit, OnDestroy, OnChanges {
   @Input() config?: AjaxLoaderOptions;
 
   defaultConfig: AjaxLoaderOptions = new AjaxLoaderOptions();
-  canShow: boolean = false;
+  canShow = false;
   currentState: XHR_REQUEST_STATE;
   statusMessage: string;
   requestStates = XHR_REQUEST_STATE;
@@ -24,7 +24,7 @@ export class AjaxLoaderComponent implements OnInit, OnDestroy, OnChanges {
     this.config = this.defaultConfig;
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.loaderStateChangeSubscription = this.activeAjaxLoadersService.getXHRStateChangeEvent()
       .subscribe((loaderStateEvent: IXHRStateChangeEventData) => {
         if (this.loaderId === loaderStateEvent.id) {
@@ -39,7 +39,7 @@ export class AjaxLoaderComponent implements OnInit, OnDestroy, OnChanges {
       });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: SimpleChanges) {
     const configChange = changes.config;
     if (configChange) {
       this.config = {
@@ -50,17 +50,17 @@ export class AjaxLoaderComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     if (this.loaderStateChangeSubscription) {
       this.loaderStateChangeSubscription.unsubscribe();
     }
   }
 
-  close(): void {
+  close() {
     this.canShow = false;
   }
 
-  private update(data = {}): void {
+  private update(data = {}) {
     switch (this.currentState) {
       case XHR_REQUEST_STATE.PROGRESS: {
         this.canShow = !(this.config.hideOnProgress === true);
@@ -86,7 +86,7 @@ export class AjaxLoaderComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  private getStatus(xhrStatusData: any): string {
+  private getStatus(xhrStatusData: any) {
     let status = '';
     if (xhrStatusData && typeof xhrStatusData === 'object') {
       if (xhrStatusData.error.split(':').length > 1) {
@@ -94,7 +94,7 @@ export class AjaxLoaderComponent implements OnInit, OnDestroy, OnChanges {
           status = JSON.parse(xhrStatusData.error).error_msg || xhrStatusData.detail || '';
         } else {
           status = JSON.parse(JSON.parse(xhrStatusData.error)).error_msg || xhrStatusData.detail || '';
-        }
+        }        
       } else {
         status = xhrStatusData.error || xhrStatusData.detail || '';
       }
@@ -103,3 +103,8 @@ export class AjaxLoaderComponent implements OnInit, OnDestroy, OnChanges {
   }
 
 }
+
+
+
+
+

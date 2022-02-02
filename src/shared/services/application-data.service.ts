@@ -16,18 +16,18 @@ export const APP_DATA_KEYS = {
 @Injectable()
 export class ApplicationDataService {
 
-  private storage: Storage = window.localStorage;
-  private inMemoryData: {} = {};
+  private storage = window.localStorage;
+  private inMemoryData = {};
   private appDataChangeEvent: EventEmitter<IAppDataChagneEvent> = new EventEmitter();
   private inMemoryDataChangeEvent: EventEmitter<IAppDataChagneEvent> = new EventEmitter();
 
   constructor() { }
 
-  getAppData(dataName: string): any {
+  getAppData(dataName: string) {
     return this.inMemoryData[dataName];
   }
 
-  setAppData(dataName: string, dataValue: any): void {
+  setAppData(dataName: string, dataValue: any) {
     this.inMemoryData[dataName] = dataValue;
     this.appDataChangeEvent.emit({
         key: dataName,
@@ -35,7 +35,7 @@ export class ApplicationDataService {
     });
   }
 
-  deleteAppData(dataName: string = '*'): void {
+  deleteAppData(dataName: string = '*') {
     if (dataName === '*') {
       this.inMemoryData = {};
     } else {
@@ -43,7 +43,7 @@ export class ApplicationDataService {
     }
   }
 
-  setStorageData(property: string, val): void {
+  setStorageData(property: string, val) {
     val = (typeof val === 'string') ? val : JSON.stringify(val);
     this.storage.setItem(property, val);
     this.inMemoryDataChangeEvent.emit({
@@ -52,11 +52,11 @@ export class ApplicationDataService {
     });
   }
 
-  getStorageData(property: string): string {
+  getStorageData(property: string) {
     return this.storage.getItem(property);
   }
 
-  deleteStorageData(property: string = '*'): void {
+  deleteStorageData(property: string = '*') {
     if (property === '*') {
       this.storage.clear();
     } else {
@@ -64,11 +64,11 @@ export class ApplicationDataService {
     }
   }
 
-  getAppDataChangeEvent(): EventEmitter<IAppDataChagneEvent> {
+  getAppDataChangeEvent() {
     return this.appDataChangeEvent;
   }
 
-  getInMemoryDataChangeEvent(): EventEmitter<IAppDataChagneEvent> {
+  getInMemoryDataChangeEvent() {
     return this.inMemoryDataChangeEvent;
   }
 

@@ -8,7 +8,7 @@ import { HTTP_ERROR_CODES } from '../../enums/http-codes.enum';
 @Injectable()
 export class AjaxLoaderInterceptor implements HttpInterceptor {
 
-    private loaderProp: string = 'ajax_loader';
+    private loaderProp = 'ajax_loader';
 
     constructor(
         private activeAjaxLoadersService: ActiveAjaxLoadersService
@@ -48,7 +48,7 @@ export class AjaxLoaderInterceptor implements HttpInterceptor {
         );
     }
 
-    private getErrorMessage(errorResponse: any, loaderName: string): string {
+    private getErrorMessage(errorResponse: any, loaderName: string) {
         let errorMessage = `Unknown Error in API call ${loaderName}`;
 
         const responseErrorBody = errorResponse.error;
@@ -65,7 +65,7 @@ export class AjaxLoaderInterceptor implements HttpInterceptor {
 
     }
 
-    private updateLoaderState(loaderName, loaderState, data?): void {
+    private updateLoaderState(loaderName, loaderState, data?) {
         if (loaderName) {
             this.activeAjaxLoadersService.updateLoaderState(loaderName, loaderState, data);
         }

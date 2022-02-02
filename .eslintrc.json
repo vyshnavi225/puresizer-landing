@@ -33,11 +33,7 @@
         ],
         "quotes": [
           "error",
-          "single",
-          {
-            "avoidEscape": true,
-            "allowTemplateLiterals": true
-          }
+          "single"
         ],
         "semi": [
           "error",
@@ -57,25 +53,20 @@
           "error",
           "as-needed"
         ],
-        "prefer-arrow-callback": "error",
         "eqeqeq": [
           "error",
           "always"
         ],
-        "curly": "error",
         "no-empty": "error",
         "no-extra-semi": "error",
         "no-floating-decimal": "error",
         "no-implicit-globals": "error",
-        "@typescript-eslint/no-inferrable-types": [
+        "no-shadow": [
           "error",
           {
-            "ignoreParameters": true,
-            "ignoreProperties": true
+            "hoist": "never"
           }
         ],
-        "@typescript-eslint/no-non-null-assertion": "error",
-        "no-fallthrough": "error",
         "one-var-declaration-per-line": [
           "error"
         ],
@@ -84,7 +75,6 @@
           "error",
           "always"
         ],
-        "max-classes-per-file": "error",
         "no-whitespace-before-property": "error",
         "@typescript-eslint/explicit-function-return-type": [
           "error",
@@ -92,37 +82,7 @@
             "allowExpressions": true
           }
         ],
-        "@typescript-eslint/typedef": ["error", {
-          "arrowParameter": false,
-          // "variableDeclaration": true,
-          "memberVariableDeclaration": true,
-          "propertyDeclaration": true
-        }],
-        "@typescript-eslint/naming-convention": [
-          "error",
-          {
-            "selector": "variable",
-            "format": [
-              "camelCase"
-            ]
-          }
-        ],
-        "space-before-function-paren": [
-          "error",
-          {
-            "anonymous": "never",
-            "named": "never",
-            "asyncArrow": "always"
-          }
-        ],
-        "@typescript-eslint/no-var-requires": "error",
-        "no-multiple-empty-lines": [
-          "error",
-          {
-            "max": 2,
-            "maxEOF": 1
-          }
-        ],
+        "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 0 }],
         "@angular-eslint/component-selector": [
           "error",
           {
@@ -138,8 +98,7 @@
             "style": "camelCase",
             "type": "attribute"
           }
-        ],
-        "@angular-eslint/no-empty-lifecycle-method": "off"
+        ]
       }
     },
     {
@@ -149,12 +108,7 @@
       "extends": [
         "plugin:@angular-eslint/template/recommended"
       ],
-      "rules": {
-        "max-len": [
-          "error",
-          140
-        ]
-      }
+      "rules": {}
     }
   ]
 }
