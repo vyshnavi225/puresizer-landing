@@ -7,16 +7,24 @@ import { AppComponent } from './app.component';
 import { AuthenticationService } from './service/authentication.service';
 import { LoginComponent } from './login/login.component';
 import { ApplicationDataService } from 'src/shared/services/application-data.service';
+import { AjaxLoaderModule } from '../shared/services/ajax-loader';
+import { SharedServicesModule } from 'src/shared/services';
+import { LandingComponent } from './landing/landing.component';
+
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    LandingComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpServicesModule
+    HttpServicesModule,
+    AjaxLoaderModule.forRoot(),
+    SharedServicesModule.forRoot()
+    
   ],
   providers: [
     AuthenticationService,

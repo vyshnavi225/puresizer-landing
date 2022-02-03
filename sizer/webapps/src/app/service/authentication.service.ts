@@ -10,9 +10,9 @@ import { ApplicationDataService, APP_DATA_KEYS } from '../../shared/services/app
 @Injectable()
 export class AuthenticationService extends RestService {
 
-  /* protected baseUrl = environment.http.baseUrl;
+  protected baseUrl = environment.http.baseUrl;
   protected queryName = 'AUTHENTICATION';
-  protected ajaxLoaderEnabled = true; */
+  protected ajaxLoaderEnabled = true;
 
   userInfo$ : BehaviorSubject<any> = new BehaviorSubject('');
 
@@ -50,9 +50,11 @@ export class AuthenticationService extends RestService {
     this.router.navigate(['/login']);
   }
 
-  getUserInfo() {
-    const url = `${this.baseUrl}/userinfo`;
-    return this.get({url}, null, 'GET_USER_INFO');
+
+
+  getLandingInfo() {
+    const url = `${this.baseUrl}/landing/appaccess`;
+    return this.get({url}, null, '');
   }
 
   private clearApplicationData() {
