@@ -8,7 +8,8 @@
 
 # Compiled files
 *.pyc
+*__pycache__*
 
 # Migration files
-/core/migrations/**
 /env_setup/migrations/**
+!/env_setup/migrations/__init__.py
