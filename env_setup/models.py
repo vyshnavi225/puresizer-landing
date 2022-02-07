@@ -25,6 +25,7 @@ class User(models.Model):
 class AppAccess(models.Model):
     username = models.TextField(default='')
     app = models.TextField(default='')
+    app_role = models.TextField(default='')
 
     class Meta:
         db_table = 'app_access'

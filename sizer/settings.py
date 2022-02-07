@@ -60,6 +60,8 @@ MIDDLEWARE = [
 
 DEV_ENVIRONMENT = os.environ.get("DEV_SIZER", "no")
 
+APP_LIST = ['fa-sizer', 'fb-sizer', 'fr-sizer']
+
 APP_URLS = {
     'fa-sizer': 'https://dev.salestools.purestorage.com/fa-sizer',
     'fb-sizer': 'https://dev.salestools.purestorage.com/fb-sizer',
@@ -102,6 +104,11 @@ POST_URL = (
 # CLIENT_ID = '0oa1v4ep2uweJ3LbE357'
 # REDIRECT_URL = 'http%3A%2F%2F10%2E81%2E1%2E225%3A8000%2Flogin%2Fokta'
 # CLIENT_SECRET = 'qxnRWEF8GNITek6P2NiA08d_4uSK2EnnGdnm0i3p'
+
+# if DEV_SIZER:
+#     ROOT_URLCONF = "sizer.dev_header_url"
+# else:
+#     ROOT_URLCONF = "sizer.urls"
 
 ROOT_URLCONF = "sizer.urls"
 
