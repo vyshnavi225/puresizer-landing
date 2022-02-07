@@ -10,7 +10,6 @@ import { ApplicationDataService, APP_DATA_KEYS } from 'src/shared/services/appli
 import { AjaxLoaderModule } from '../shared/services/ajax-loader';
 import { SharedServicesModule } from 'src/shared/services';
 import { LandingComponent } from './landing/landing.component';
-import { APP_BASE_HREF } from '@angular/common';
 
 
 @NgModule({
@@ -30,7 +29,6 @@ import { APP_BASE_HREF } from '@angular/common';
   providers: [
     AuthenticationService,
     ApplicationDataService,
-
   ],
   bootstrap: [AppComponent]
 })
