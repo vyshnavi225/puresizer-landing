@@ -27,7 +27,12 @@ export class LandingComponent extends AutoDestroyable implements OnInit {
         this.cdr.detectChanges();
       }),
     ).subscribe(res => {
+      console.log(res);
       this.landingResult = res.data;
     });
   }
+
+  // pureLandingClick(){
+  //   this.authenticationService.postProjectDetails().subscribe( res => console.log(res))
+  // }
 }

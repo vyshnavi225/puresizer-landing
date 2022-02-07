@@ -57,6 +57,15 @@ export class AuthenticationService extends RestService {
     return this.get({url}, null, '');
   }
 
+  // postProjectDetails(){
+  //   let payload = 
+  //     {
+  //       "username": 'admin',
+  //       "app": 'fa-sizer'
+  //     }
+  //   const url = `${this.baseUrl}/landing/appaccess`;
+  //   return this.save({url}, null, payload, '');
+  // }
   private clearApplicationData() {
     this.applicationDataService.deleteAppData();
     this.applicationDataService.deleteStorageData();

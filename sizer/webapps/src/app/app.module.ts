@@ -6,10 +6,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthenticationService } from './service/authentication.service';
 import { LoginComponent } from './login/login.component';
-import { ApplicationDataService } from 'src/shared/services/application-data.service';
+import { ApplicationDataService, APP_DATA_KEYS } from 'src/shared/services/application-data.service';
 import { AjaxLoaderModule } from '../shared/services/ajax-loader';
 import { SharedServicesModule } from 'src/shared/services';
 import { LandingComponent } from './landing/landing.component';
+import { APP_BASE_HREF } from '@angular/common';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { LandingComponent } from './landing/landing.component';
   ],
   providers: [
     AuthenticationService,
-    ApplicationDataService
+    ApplicationDataService,
+
   ],
   bootstrap: [AppComponent]
 })
