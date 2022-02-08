@@ -17,7 +17,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import env_setup.utils as utils
-import sizer.settings as env
+from sizer import settings
 from env_setup.exception import TokenExpired, ValidationError
 from .constants import Constants
 from .models import User, AppAccess
@@ -29,10 +29,10 @@ config.read(path.join(settings.BASE_DIR, 'sizer/config.ini'))
 version = config.get('VERSION', 'SIZING_TOOL')
 
 
-# APP_URL = env.APP_URL
-# CLIENT_ID = env.CLIENT_ID
-# REDIRECT_URL = env.REDIRECT_URL
-# CLIENT_SECRET = env.CLIENT_SECRET
+# APP_URL = settings.APP_URL
+# CLIENT_ID = settings.CLIENT_ID
+# REDIRECT_URL = settings.REDIRECT_URL
+# CLIENT_SECRET = settings.CLIENT_SECRET
 # # random_hash = binascii.hexlify(os.urandom(16))
 # POST_URL = '{0}/authorize?client_id={1}&response_type=' \
 #            'code&scope=openid&redirect_uri={2}&state=state-' \
@@ -111,7 +111,7 @@ class BaseView(APIView):
 
     def user_validator(self, user_data):
 
-        if env.DEV_SIZER:
+        if settings.DEV_SIZER:
             self.username = 'admin'
             self.role = 'admin'
             self.platform = 'local'
@@ -175,16 +175,16 @@ class OktaAuthView(APIView):
         Go through the okta check process and redirect user back to app tiles
         page if login successfully
         """
-        if env.DEV_SIZER:
+        if settings.DEV_SIZER:
             username = 'admin'
             access_token = 'abcd'
             id_token = 'wxyz'
             seconds = 60000
         else:
-            if request.GET.get(Constants.ISS, ''):
+            if not request.GET.get(Constants.CODE, ''):
                 dev_params, code_c = utils.save_dev_params()
                 post_url = utils.construct_post_url(dev_params.params, code_c)
-                logger.info('ISS Detected:' + post_url)
+                logger.info('Code Detected:' + post_url)
                 return HttpResponseRedirect(post_url)
 
             code = request.GET.get(Constants.CODE, '')
@@ -267,10 +267,23 @@ class AppAccessAPI(BaseView):
         # user_data = signing.loads(user_data)
         # Get the apps that the logged in user can access
 
-        access_apps = {obj.app: env.APP_URLS[obj.app] for obj in AppAccess.objects.filter(username=self.username)}
+        data = dict()
+
+        data['username'] = self.username
+        data['role'] = self.role
+        data['platform'] = self.platform
+
+        data['apps'] = list()
+
+        for app_obj in AppAccess.objects.filter(username=self.username):
+            data['apps'].append({
+                'app_name': app_obj.app,
+                'url': settings.APP_URLS[app_obj.app],
+                'app_role': app_obj.app_role
+            })
 
         return Response({'status': 'success',
-                         'data': access_apps}, status=status.HTTP_200_OK)
+                         'data': data}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
