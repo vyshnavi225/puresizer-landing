@@ -6,7 +6,7 @@
     </div>
     <div class="row tileWrapper">
 
-        <div *ngIf="landingResult['fr-sizer'] !== undefined">
+        <div *ngIf="landingResult.includes('fr-sizer')">
             <a href="https://dev.salestools.purestorage.com/fr-sizer">
                 <div class="flashRestoreButton">
                     <div class="image"></div>
@@ -17,7 +17,7 @@
             </a>
         </div>
 
-        <div *ngIf="landingResult['fb-sizer'] !== undefined">
+        <div *ngIf="landingResult.includes('fb-sizer')">
             <a href="https://dev.salestools.purestorage.com/fb-sizer">
                 <div class="flashBladeButton">
                     <div class="image"></div>
@@ -28,7 +28,7 @@
             </a>
         </div>
 
-        <div *ngIf="landingResult['fa-sizer'] !== undefined">
+        <div *ngIf="landingResult.includes('fa-sizer')">
             <a href="https://dev.salestools.purestorage.com/fa-sizer">
                 <div class="flashArrayButton">
                     <div class="image"></div>
