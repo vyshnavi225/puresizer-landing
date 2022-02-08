@@ -28,7 +28,7 @@
     cursor: pointer;
 }
 
-.flashArrayButton, .flashBladeButton {
+.flashRestoreButton, .flashArrayButton, .flashBladeButton {
     position: relative;
     width: 265px;
     border-radius: 6px;
@@ -40,17 +40,17 @@
     margin-right: 10px;
 }
 
-.flashRestoreButton {
-    position: relative;
-    width: 265px;
-    border-radius: 6px;
-    border: 1px solid #FE5000;
-    display: table-cell;
-    vertical-align: middle;
-    height: 220px;
-    text-align: center;
-    margin-right: 10px;
-}
+// .flashRestoreButton {
+//     position: relative;
+//     width: 265px;
+//     border-radius: 6px;
+//     border: 1px solid #FE5000;
+//     display: table-cell;
+//     vertical-align: middle;
+//     height: 220px;
+//     text-align: center;
+//     margin-right: 10px;
+// }
 .material-icons {
     color: #FE5000;
     position: absolute;
@@ -60,7 +60,7 @@
     font-size: 20px;
 }
 
-.flashArrayButton:hover, .flashBladeButton:hover {
+.flashRestoreButton:hover, .flashArrayButton:hover, .flashBladeButton:hover {
     position: relative;
     width: 265px;
     border-radius: 6px;
@@ -82,7 +82,7 @@
     margin: auto;
 }
 
-.flashArrayButton:hover .material-icons {
+.flashArrayButton:hover .material-icons, .flashRestoreButton:hover .material-icons {
     color: #fff !important;
     position: absolute;
     right: 20px;
@@ -91,17 +91,18 @@
     font-size: 20px;
 }
 
-.flashRestoreButton:hover {
-    position: relative;
-    width: 265px;
-    border-radius: 6px;
-    border: 1px solid #FE5000;
-    background: #FE5000;
-    display: table-cell;
-    vertical-align: middle;
-    height: 220px;
-    text-align: center
-}
+
+// .flashRestoreButton:hover {
+//     position: relative;
+//     width: 265px;
+//     border-radius: 6px;
+//     border: 1px solid #FE5000;
+//     background: #FE5000;
+//     display: table-cell;
+//     vertical-align: middle;
+//     height: 220px;
+//     text-align: center
+// }
 
 .flashRestoreButton .image {
     content: url('../../assets/images/pure-flashrecover-logo.png');
@@ -113,14 +114,14 @@
     margin: auto;
 }
 
-.flashRestoreButton:hover .material-icons {
-    color: #fff !important;
-    position: absolute;
-    right: 20px;
-    bottom: 10px;
-    transform: rotate(0deg);
-    font-size: 20px;
-}
+// .flashRestoreButton:hover .material-icons {
+//     color: #fff !important;
+//     position: absolute;
+//     right: 20px;
+//     bottom: 10px;
+//     transform: rotate(0deg);
+//     font-size: 20px;
+// }
 
 .tileWrapper {
     display: flex;

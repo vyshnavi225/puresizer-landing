@@ -5,10 +5,10 @@
         </span>
     </div>
     <div class="row tileWrapper">
-
-        <div *ngIf="landingResult.includes('fr-sizer')">
-            <a href="https://dev.salestools.purestorage.com/fr-sizer">
-                <div class="flashRestoreButton">
+        <div *ngFor="let item of landingResult">
+            <a href={{item.url}}>
+                <div [ngClass]="{'flashRestoreButton': item.app_name === 'fr-sizer', 'flashBladeButton': item.app_name === 'fb-sizer',
+                    'flashArrayButton': item.app_name === 'fa-sizer'}">
                     <div class="image"></div>
                     <span class="material-icons">
                         <i class="fa fa-arrow-right" aria-hidden="true"></i>
@@ -16,28 +16,5 @@
                 </div>
             </a>
         </div>
-
-        <div *ngIf="landingResult.includes('fb-sizer')">
-            <a href="https://dev.salestools.purestorage.com/fb-sizer">
-                <div class="flashBladeButton">
-                    <div class="image"></div>
-                    <span class="material-icons">
-                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                    </span>
-                </div>
-            </a>
-        </div>
-
-        <div *ngIf="landingResult.includes('fa-sizer')">
-            <a href="https://dev.salestools.purestorage.com/fa-sizer">
-                <div class="flashArrayButton">
-                    <div class="image"></div>
-                    <span class="material-icons">
-                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
-                    </span>
-                </div>
-            </a>
-        </div>
-
     </div>
 </div>
