@@ -111,18 +111,15 @@ def encode_verifier(code_verifier):
 
 
 def construct_post_url(hex_code, code_c):
-    _post_url = f"""{settings.APP_URL}/authorize?client_id={settings.CLIENT_ID}&response_type=\
-        code&scope=openid&redirect_uri={settings.REDIRECT_URL}&state=state-{hex_code}\
-        &code_challenge_method=S256&code_challenge={code_c}"""
+
+    _post_url = f"""{settings.APP_URL}/authorize?client_id={settings.CLIENT_ID}&response_type=code&scope=openid&redirect_uri={settings.REDIRECT_URL}&state=state-{hex_code}&code_challenge_method=S256&code_challenge={code_c}"""
 
     return _post_url
 
 
 def authzero_authorize_url(hex_code, code_c):
 
-    authorize_url = f"""{settings.AUTHZERO_AUTHORIZE_URL}?client_id={settings.AUTHZERO_CLIENT_ID}&response_type=\
-        code&scope=openid&redirect_uri={settings.AUTHZERO_REDIRECT_URI}&state=state-{hex_code}\
-        &code_challenge_method=S256&code_challenge={code_c}"""
+    authorize_url = f"""{settings.AUTHZERO_AUTHORIZE_URL}?client_id={settings.AUTHZERO_CLIENT_ID}&response_type=code&scope=openid&redirect_uri={settings.AUTHZERO_REDIRECT_URI}&state=state-{hex_code}&code_challenge_method=S256&code_challenge={code_c}"""
 
     return authorize_url
 
@@ -134,8 +131,8 @@ def authzero_get_token(code, code_verifier):
     :param code_verifier: string, code that is used to get access token
     :return auth_res: authentication result, has token if success
     """
-    logger.info('CODE - ', code)
-    data = f"""grant_type=authorization_code&client_id={settings.AUTHZERO_CLIENT_ID}&redirect_uri={settings.AUTHZERO_REDIRECT_URI}&code={code}&code_verifier={code_verifier}"""
+
+    data = f'grant_type=authorization_code&client_id={settings.AUTHZERO_CLIENT_ID}&client_secret={settings.AUTHZERO_CLIENT_SECRET}&redirect_uri={settings.AUTHZERO_REDIRECT_URI}&code={code}&code_verifier={code_verifier}'
     logger.info(data)
     token_response = requests.post(
         f"{settings.AUTHZERO_TOKEN_URL}?",
@@ -153,7 +150,7 @@ def introspect_token(token):
     """
     Check whether token is active
     """
-    token_valid_res = requests.post(
+    introspect_response = requests.post(
         f"{settings.APP_URL}/introspect",
         headers={
             "accept": "application/json",
@@ -163,11 +160,11 @@ def introspect_token(token):
         data={
             "token": token,
             "token_type_hint": "access_token",
-            "client_id": settings.CLIENT_ID,
+            "client_id": settings.AUTHZERO_CLIENT_ID,
         },
     )
 
-    return token_valid_res
+    return introspect_response
 
 
 if __name__ == "__main__":
