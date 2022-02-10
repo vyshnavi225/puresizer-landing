@@ -241,7 +241,7 @@ class OktaAuthView(APIView):
             'role': user.role,
         }
 
-        response = HttpResponseRedirect('/landing-static/index.html')
+        response = HttpResponseRedirect('/landing-app/index.html')
         # response = HttpResponseRedirect('/index.html')
         response.set_cookie(Constants.USER_DATA, signing.dumps(user_data), httponly=True, max_age=60000)
 
@@ -257,6 +257,90 @@ class OktaAuthView(APIView):
         logger.info('Post URL: ' + post_url)
 
         return Response({'redirect_url': post_url})
+
+
+class AuthZeroView(APIView):
+    """
+    AuthZero authentication APIs
+    """
+
+    def get(self, request):
+        """
+        Go through the AuthZero check process and redirect user back to app tiles
+        page if login successfully
+        """
+        if settings.DEV_SIZER:
+            username = 'admin'
+            access_token = 'abcd'
+            id_token = 'wxyz'
+            seconds = 60000
+        else:
+            if not request.GET.get(Constants.CODE, ''):
+                dev_params, code_c = utils.save_dev_params()
+                authorize_url = utils.authzero_authorize_url(dev_params.params, code_c)
+                logger.info('Code Detected:' + authorize_url)
+                return HttpResponseRedirect(authorize_url)
+
+            code = request.GET.get(Constants.CODE, '')
+            state = request.GET.get(Constants.STATE, '')
+            logger.info('Received state: ' + state)
+
+            valid, code_v_ret = utils.check_state(state)
+
+            if not valid:
+                logger.info('State Check Failed')
+                raise ValidationError(Constants.PURESTORAGE)
+
+            token_response = utils.authzero_get_token(code, code_v_ret)
+
+            logger.info('\n\n\nTOKEN JSON RESPONSE - ', token_response.json(), '\n\n\n')
+
+            if not token_response.json().get(Constants.ACCESS_TOKEN):
+                logger.info('No Access Token Received')
+                raise ValidationError(Constants.PURESTORAGE)
+
+            access_token = token_response.json()[Constants.ACCESS_TOKEN]
+            id_token = token_response.json()[Constants.ID_TOKEN]
+            seconds = token_response.json().get(Constants.EXPIRES_IN)
+
+            # TODO - Introspect here
+            introspect_response = utils.introspect_token(access_token)
+
+            if not introspect_response.json().get(Constants.ACTIVE):
+                raise TokenExpired
+
+            username = introspect_response.json().get(Constants.USERNAME)
+
+        try:
+            user = User.objects.get(username=username, platform=Constants.OKTA)
+            user = update_okta_user(user, access_token, seconds)
+
+        except ObjectDoesNotExist:
+            user = create_okta_user(username, access_token, id_token, seconds)
+
+            # Give access to fa-sizer by default
+            try:
+                AppAccess.objects.get(username=username, app=Constants.FA_SIZER)
+            except ObjectDoesNotExist as e:
+                logger.error('No app access for user {}. Now provided.'.format(username))
+                app_access = AppAccess.objects.create(username=username, app=Constants.FA_SIZER)
+                app_access.save()
+
+        logger.info(model_to_dict(user))
+        user.save()
+
+        user_data = {
+            'username': user.username,
+            'platform': user.platform,
+            'access_token': user.access_token,
+            'role': user.role,
+        }
+
+        response = HttpResponseRedirect('/landing-app/index.html')
+        # response = HttpResponseRedirect('/index.html')
+        response.set_cookie(Constants.USER_DATA, signing.dumps(user_data), httponly=True, max_age=60000)
+
+        return response
 
 
 class AppAccessAPI(BaseView):

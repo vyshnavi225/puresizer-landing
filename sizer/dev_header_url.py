@@ -5,6 +5,6 @@ from sizer import settings
 
 urlpatterns = [
     path('landing/', include('sizer.urls')),
-    path(r'', lambda r: HttpResponseRedirect('/index.html')),
-    re_path(r'^(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT})
+    path(r'', lambda r: HttpResponseRedirect('/landing-app/index.html')),
+    re_path(r'^(?P<path>.*)$', serve, {'document_root': settings.UI_ROOT})
 ]

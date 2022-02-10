@@ -15,6 +15,7 @@ class Constants(object):
     ADMIN = "admin"
     LOCAL = "local"
     OKTA = "okta"
+    PURESTORAGE = 'purestorage'
     PLATFORM = "platform"
     EMAIL = "user_email"
     APP_ACCESS = "app_access"
