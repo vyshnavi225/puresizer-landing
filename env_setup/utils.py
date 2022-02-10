@@ -6,20 +6,16 @@ import secrets
 
 import requests
 
-import sizer.settings as env
+from sizer import settings
 from .models import DevParams
 
 from logging import getLogger
 logger = getLogger(__name__)
 
-CLIENT_ID = env.CLIENT_ID
-REDIRECT_URL = env.REDIRECT_URL
-APP_URL = env.APP_URL
-
 # POST_URL = (
 #     "{0}/authorize?client_id={1}&response_type="
 #     "code&scope=openid&redirect_uri={2}&state=state-".format(
-#         APP_URL, CLIENT_ID, REDIRECT_URL
+#         settings.APP_URL, settings.CLIENT_ID, settings.REDIRECT_URL
 #     )
 # )
 
@@ -64,11 +60,11 @@ def get_token(code, code_verifier):
     """
     logger.info(code)
     logger.info(set(code))
-    logger.info(CLIENT_ID)
-    data = f"""grant_type=authorization_code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URL}&code={code}&code_verifier={code_verifier}"""
+    logger.info(settings.CLIENT_ID)
+    data = f"""grant_type=authorization_code&client_id={settings.CLIENT_ID}&redirect_uri={settings.REDIRECT_URL}&code={code}&code_verifier={code_verifier}"""
     logger.info(data)
     auth_res = requests.post(
-        f"{APP_URL}/token",
+        f"{settings.APP_URL}/token",
         data=data,
         headers={
             "accept": "application/json",
@@ -84,7 +80,7 @@ def validate_token(token):
     Check whether token is active
     """
     token_valid_res = requests.post(
-        f"{APP_URL}/introspect",
+        f"{settings.APP_URL}/introspect",
         headers={
             "accept": "application/json",
             "cache-control": "no-cache",
@@ -93,7 +89,7 @@ def validate_token(token):
         data={
             "token": token,
             "token_type_hint": "access_token",
-            "client_id": CLIENT_ID,
+            "client_id": settings.CLIENT_ID,
         },
     )
 
@@ -115,11 +111,63 @@ def encode_verifier(code_verifier):
 
 
 def construct_post_url(hex_code, code_c):
-    _post_url = f"""{APP_URL}/authorize?client_id={CLIENT_ID}&response_type=\
-        code&scope=openid&redirect_uri={REDIRECT_URL}&state=state-{hex_code}\
+    _post_url = f"""{settings.APP_URL}/authorize?client_id={settings.CLIENT_ID}&response_type=\
+        code&scope=openid&redirect_uri={settings.REDIRECT_URL}&state=state-{hex_code}\
         &code_challenge_method=S256&code_challenge={code_c}"""
 
     return _post_url
+
+
+def authzero_authorize_url(hex_code, code_c):
+
+    authorize_url = f"""{settings.AUTHZERO_AUTHORIZE_URL}?client_id={settings.AUTHZERO_CLIENT_ID}&response_type=\
+        code&scope=openid&redirect_uri={settings.AUTHZERO_REDIRECT_URI}&state=state-{hex_code}\
+        &code_challenge_method=S256&code_challenge={code_c}"""
+
+    return authorize_url
+
+
+def authzero_get_token(code, code_verifier):
+    """
+    Get token from OKTA
+    :param code: string, code that is used to get access token
+    :param code_verifier: string, code that is used to get access token
+    :return auth_res: authentication result, has token if success
+    """
+    logger.info('CODE - ', code)
+    data = f"""grant_type=authorization_code&client_id={settings.AUTHZERO_CLIENT_ID}&redirect_uri={settings.AUTHZERO_REDIRECT_URI}&code={code}&code_verifier={code_verifier}"""
+    logger.info(data)
+    token_response = requests.post(
+        f"{settings.AUTHZERO_TOKEN_URL}?",
+        data=data,
+        headers={
+            "accept": "application/json",
+            "cache-control": "no-cache",
+            "content-type": "application/x-www-form-urlencoded",
+        },
+    )
+    return token_response
+
+
+def introspect_token(token):
+    """
+    Check whether token is active
+    """
+    token_valid_res = requests.post(
+        f"{settings.APP_URL}/introspect",
+        headers={
+            "accept": "application/json",
+            "cache-control": "no-cache",
+            "content-type": "application/x-www-form-urlencoded",
+        },
+        data={
+            "token": token,
+            "token_type_hint": "access_token",
+            "client_id": settings.CLIENT_ID,
+        },
+    )
+
+    return token_valid_res
 
 
 if __name__ == "__main__":

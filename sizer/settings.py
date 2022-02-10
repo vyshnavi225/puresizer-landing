@@ -76,7 +76,7 @@ if DEV_ENVIRONMENT == "yes":
     REDIRECT_URL = "http%3A%2F%2F127.0.0.1%3A8001%2Flogin%2Fokta"
     APP_URL = "https://dev-601430.okta.com/oauth2/default/v1"
 
-    LOGIN_REDIRECT_ADDR = "http://127.0.0.1:8000/landing-static/index.html"
+    LOGIN_REDIRECT_ADDR = "http://127.0.0.1:8000/landing-app/index.html"
 
     LOGOUT_REDIRECT_ADDR = "http://127.0.0.1:8000/landing/login"
 
@@ -88,29 +88,32 @@ else:
     CLIENT_ID = "0oa1i20ucvrIJrham1d8"
     REDIRECT_URL = "https%3A%2F%2Fdev%2Dfa%2Dsizer%2Esalestools%2Epurestorage%2Ecom%2Flanding%2Flogin%2Fokta"
     APP_URL = "https://purestorage.okta.com/oauth2/v1"
-
-    LOGIN_REDIRECT_ADDR = "https://dev-fa-sizer.salestools.purestorage.com/#/scenario"
     LOGOUT_REDIRECT_ADDR = "https://dev-fa-sizer.salestools.purestorage.com/#/login"
-
     SERVER_ADDRESS = "dev-fa-sizer.salestools.purestorage.com"
     PORT = "443"
 
-POST_URL = (
-    f"{APP_URL}/authorize?client_id={CLIENT_ID}&response_type="
-    f"code&scope=openid&redirect_uri={REDIRECT_URL}&state=state-"
-)
+    AUTHZERO_AUTHORIZE_URL = \
+        'https://authportal-web-external.staging-cloud-support.purestorage.com/sso/oauth2/authorize'
+    AUTHZERO_TOKEN_URL = 'https://authportal-web-external.staging-cloud-support.purestorage.com/oauth/token'
+    AUTHZERO_CLIENT_ID = 'Dca9g7W8P8kNoyIeSDDZumAD7lhOjvIJ'
+    AUTHZERO_REDIRECT_URI = 'https%3A%2F%2Fdev-fa-sizer.salestools.purestorage.com%2Flanding%2Flogin%2Fauthzero'
+
+# POST_URL = (
+#     f"{APP_URL}/authorize?client_id={CLIENT_ID}&response_type="
+#     f"code&scope=openid&redirect_uri={REDIRECT_URL}&state=state-"
+# )
 # stage server shuoj account
 # APP_URL = 'https://dev-601430.okta.com/oauth2/default/v1'
 # CLIENT_ID = '0oa1v4ep2uweJ3LbE357'
 # REDIRECT_URL = 'http%3A%2F%2F10%2E81%2E1%2E225%3A8000%2Flogin%2Fokta'
 # CLIENT_SECRET = 'qxnRWEF8GNITek6P2NiA08d_4uSK2EnnGdnm0i3p'
 
-# if DEV_SIZER:
-#     ROOT_URLCONF = "sizer.dev_header_url"
-# else:
-#     ROOT_URLCONF = "sizer.urls"
+if DEV_SIZER:
+    ROOT_URLCONF = "sizer.dev_header_url"
+else:
+    ROOT_URLCONF = "sizer.urls"
 
-ROOT_URLCONF = "sizer.urls"
+# ROOT_URLCONF = "sizer.urls"
 
 TEMPLATES = [
     {
@@ -175,13 +178,14 @@ USE_L10N = True
 
 USE_TZ = True
 
-UI_ROOT = os.path.join(BASE_DIR, "sizer/webapps/dist/webApp/")
+UI_ROOT = os.path.join(BASE_DIR, "sizer/webapps/dist/landing-app/")
 UI_URL = "ui/"
+STATICFILES_DIRS = (UI_ROOT,)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "report/")
 
-STATIC_URL = "landing-static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "sizer/webapps/dist/webApp/")
+STATIC_URL = "landing-app/"
+# STATIC_ROOT = os.path.join(BASE_DIR, "sizer/webapps/dist/landing-app/")
 
 LOGGING = {
     "version": 1,
