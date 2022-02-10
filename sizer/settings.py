@@ -92,10 +92,10 @@ else:
     SERVER_ADDRESS = "dev-fa-sizer.salestools.purestorage.com"
     PORT = "443"
 
-    AUTHZERO_AUTHORIZE_URL = \
-        'https://authportal-web-external.staging-cloud-support.purestorage.com/sso/oauth2/authorize'
+    AUTHZERO_AUTHORIZE_URL = 'https://authportal-web-external.staging-cloud-support.purestorage.com/sso/oauth2/authorize'
     AUTHZERO_TOKEN_URL = 'https://authportal-web-external.staging-cloud-support.purestorage.com/oauth/token'
     AUTHZERO_CLIENT_ID = 'Dca9g7W8P8kNoyIeSDDZumAD7lhOjvIJ'
+    AUTHZERO_CLIENT_SECRET = 'kKnuRo-p-KgBadpgHd1Kn2fSL_dNzX8NTfg_nnLbdRXX-ShuUdQ83RMMthEubOdS'
     AUTHZERO_REDIRECT_URI = 'https%3A%2F%2Fdev-fa-sizer.salestools.purestorage.com%2Flanding%2Flogin%2Fauthzero'
 
 # POST_URL = (

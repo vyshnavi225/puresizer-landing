@@ -184,12 +184,13 @@ class OktaAuthView(APIView):
             if not request.GET.get(Constants.CODE, ''):
                 dev_params, code_c = utils.save_dev_params()
                 post_url = utils.construct_post_url(dev_params.params, code_c)
-                logger.info('Code Detected:' + post_url)
+                logger.info('\nFull authorize URL - {}\n'.format(post_url))
                 return HttpResponseRedirect(post_url)
 
             code = request.GET.get(Constants.CODE, '')
             state = request.GET.get(Constants.STATE, '')
-            logger.info('Received state: ' + state)
+            logger.info('\nReceived code: {}\n'.format(code))
+            logger.info('\nReceived state: {}\n'.format(state))
 
             valid, code_v_ret = utils.check_state(state)
 
@@ -198,8 +199,7 @@ class OktaAuthView(APIView):
                 raise ValidationError(Constants.OKTA)
 
             auth_res = utils.get_token(code, code_v_ret)
-
-            logger.info(auth_res.json())
+            logger.info('\nToken response - {}\n'.format(auth_res.json()))
 
             if not auth_res.json().get(Constants.ACCESS_TOKEN):
                 logger.info('No Access Token Received')
@@ -210,9 +210,11 @@ class OktaAuthView(APIView):
             seconds = auth_res.json().get(Constants.EXPIRES_IN)
 
             token_valid_res = utils.validate_token(access_token)
+            logger.info('\nIntrospect response - {}\n'.format(token_valid_res.json()))
 
             if not token_valid_res.json().get(Constants.ACTIVE):
-                raise TokenExpired
+                # TODO Update url later
+                return HttpResponse('Introspection of token failed. <a href="https://dev-fa-sizer.salestools.purestorage.com/landing/login/okta">Click here to retry.</a>')
 
             username = token_valid_res.json().get(Constants.USERNAME)
 
@@ -226,8 +228,8 @@ class OktaAuthView(APIView):
             # Give access to fa-sizer by default
             try:
                 AppAccess.objects.get(username=username, app=Constants.FA_SIZER)
-            except ObjectDoesNotExist as e:
-                logger.error('No app access for user {}. Now provided.'.format(username))
+            except ObjectDoesNotExist:
+                logger.error('No app access for user {}. Created entry'.format(username))
                 app_access = AppAccess.objects.create(username=username, app=Constants.FA_SIZER)
                 app_access.save()
 
@@ -278,12 +280,13 @@ class AuthZeroView(APIView):
             if not request.GET.get(Constants.CODE, ''):
                 dev_params, code_c = utils.save_dev_params()
                 authorize_url = utils.authzero_authorize_url(dev_params.params, code_c)
-                logger.info('Code Detected:' + authorize_url)
+                logger.info('\nFull authorize URL - {}\n'.format(authorize_url))
                 return HttpResponseRedirect(authorize_url)
 
             code = request.GET.get(Constants.CODE, '')
             state = request.GET.get(Constants.STATE, '')
-            logger.info('Received state: ' + state)
+            logger.info('\nReceived code: {}\n'.format(code))
+            logger.info('\nReceived state: {}\n'.format(state))
 
             valid, code_v_ret = utils.check_state(state)
 
@@ -293,7 +296,7 @@ class AuthZeroView(APIView):
 
             token_response = utils.authzero_get_token(code, code_v_ret)
 
-            logger.info('\n\n\nTOKEN JSON RESPONSE - ', token_response.json(), '\n\n\n')
+            logger.info('\nToken response - {}\n'.format(token_response.json()))
 
             if not token_response.json().get(Constants.ACCESS_TOKEN):
                 logger.info('No Access Token Received')
@@ -301,13 +304,16 @@ class AuthZeroView(APIView):
 
             access_token = token_response.json()[Constants.ACCESS_TOKEN]
             id_token = token_response.json()[Constants.ID_TOKEN]
-            seconds = token_response.json().get(Constants.EXPIRES_IN)
+            seconds = 60000
 
             # TODO - Introspect here
             introspect_response = utils.introspect_token(access_token)
 
+            logger.info('\nIntrospect response - {}\n'.format(introspect_response.json()))
+
             if not introspect_response.json().get(Constants.ACTIVE):
-                raise TokenExpired
+                # TODO Update url later
+                return HttpResponse('Introspection of token failed. <a href="https://dev-fa-sizer.salestools.purestorage.com/landing/login/authzero">Click here to retry.</a>')
 
             username = introspect_response.json().get(Constants.USERNAME)
 
@@ -321,8 +327,8 @@ class AuthZeroView(APIView):
             # Give access to fa-sizer by default
             try:
                 AppAccess.objects.get(username=username, app=Constants.FA_SIZER)
-            except ObjectDoesNotExist as e:
-                logger.error('No app access for user {}. Now provided.'.format(username))
+            except ObjectDoesNotExist:
+                logger.error('No app access for user {}. Created entry.'.format(username))
                 app_access = AppAccess.objects.create(username=username, app=Constants.FA_SIZER)
                 app_access.save()
 
