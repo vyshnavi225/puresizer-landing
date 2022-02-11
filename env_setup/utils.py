@@ -167,11 +167,10 @@ def introspect_token(token):
 
 
 def get_userinfo(access_token):
-    userinfo_response = requests.post(f"{settings.AUTHZERO_USERINFO_URL}?",
-                                      headers={"accept": "application/json", "cache-control": "no-cache",
-                                               "content-type": "application/x-www-form-urlencoded"},
-                                      data={"token": access_token, "token_type_hint": "access_token",
-                                            "client_id": settings.AUTHZERO_CLIENT_ID})
+    userinfo_response = requests.get(f"{settings.AUTHZERO_USERINFO_URL}",
+                                     params={"access_token": access_token},
+                                     headers={"accept": "application/json", "cache-control": "no-cache",
+                                              "content-type": "application/x-www-form-urlencoded"})
 
     return userinfo_response
 

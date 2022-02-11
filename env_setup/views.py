@@ -308,13 +308,18 @@ class AuthZeroView(APIView):
             # introspect_response = utils.introspect_token(access_token)
             userinfo_response = utils.get_userinfo(access_token)
 
-            logger.info('\nUserinfo response - {}\n'.format(userinfo_response.content))
+            # logger.info('\nUserinfo response - {}\n'.format(userinfo_response.content))
 
             if not userinfo_response.ok:
                 return Response({'status': 'error',
                                  'data': userinfo_response.content}, status=status.HTTP_401_UNAUTHORIZED)
 
-            username = userinfo_response.json().get(Constants.USERNAME)
+            try:
+                username = userinfo_response.json().get(Constants.SUB).split('|')[2]
+            except Exception as e:
+                logger.error('Error - {} \nUsername not received or is not formatted properly'.format(e))
+                return Response({'status': 'error',
+                                 'data': userinfo_response.content}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user = User.objects.get(username=username, platform=Constants.OKTA)
@@ -322,6 +327,8 @@ class AuthZeroView(APIView):
 
         except ObjectDoesNotExist:
             user = create_okta_user(username, access_token, id_token, seconds)
+            logger.info(model_to_dict(user))
+            user.save()
 
             # Give access to fa-sizer by default
             try:
@@ -331,9 +338,6 @@ class AuthZeroView(APIView):
                 app_access = AppAccess.objects.create(username=username, app=Constants.FA_SIZER)
                 app_access.save()
 
-        logger.info(model_to_dict(user))
-        user.save()
-
         user_data = {
             'username': user.username,
             'platform': user.platform,
@@ -341,9 +345,9 @@ class AuthZeroView(APIView):
             'role': user.role,
         }
 
-        response = HttpResponseRedirect('/landing-app/index.html')
-        # response = HttpResponseRedirect('/index.html')
-        response.set_cookie(Constants.USER_DATA, signing.dumps(user_data), httponly=True, max_age=60000)
+        response = HttpResponseRedirect('/landing-static/index.html')
+        response.set_cookie(Constants.USER_DATA, signing.dumps(user_data), httponly=True,
+                            max_age=Constants.COOKIE_DURATION_SECONDS)
 
         return response
 
