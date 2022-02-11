@@ -19,5 +19,5 @@ const routes: Routes = [
 ];
 
 export const RouterConfigModule: ModuleWithProviders<any> = RouterModule.forRoot(routes, {
-  useHash: false
+  useHash: true
 });
