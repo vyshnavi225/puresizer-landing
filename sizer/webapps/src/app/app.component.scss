@@ -1,0 +1,13 @@
+.row {
+    display: block;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.header-comp {
+    scroll-behavior: unset;
+    position: sticky;
+    top: 0px;
+    z-index: 10;
+}

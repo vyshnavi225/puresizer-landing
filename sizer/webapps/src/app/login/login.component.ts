@@ -30,9 +30,9 @@ export class LoginComponent implements OnInit {
   }
 
   public oktaLogin() {
-    /* this.authenticationService.oktaLogin().subscribe( (res: {redirect_url: string}) => {
+    this.authenticationService.oktaLogin().subscribe( (res: {redirect_url: string}) => {
       // redirecting user to okta login page
       window.location.href = res.redirect_url;
-    } );*/
+    } );
   } 
 }

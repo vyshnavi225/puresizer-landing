@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "puresizer-landing": {
+    "landing-app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -20,7 +20,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/puresizer-landing",
+            "outputPath": "dist/landing-app",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -30,10 +30,16 @@
               "src/favicon.ico",
               "src/assets"
             ],
-            "styles": [
+            "styles": [             
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",           
+              "node_modules/font-awesome/css/font-awesome.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.js",
+              "node_modules/popper.js/dist/umd/popper.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -72,10 +78,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "puresizer-landing:build:production"
+              "browserTarget": "landing-app:build:production"
             },
             "development": {
-              "browserTarget": "puresizer-landing:build:development"
+              "browserTarget": "landing-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -83,7 +89,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "puresizer-landing:build"
+            "browserTarget": "landing-app:build"
           }
         },
         "test": {
@@ -107,5 +113,5 @@
       }
     }
   },
-  "defaultProject": "puresizer-landing"
+  "defaultProject": "landing-app"
 }

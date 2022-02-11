@@ -6,11 +6,11 @@
     justify-content: space-between;
 }
 
-.logo span {
+.logo .toolsvault {
     color: #fff;
     position: relative;
     font-size: 14px;
-    top: 18px;
+    top: 16px;
     left: 16px;
     opacity: 0.95;
 }
@@ -28,7 +28,7 @@
     cursor: pointer;
 }
 
-.flashArrayButton {
+.flashRestoreButton, .flashArrayButton, .flashBladeButton {
     position: relative;
     width: 265px;
     border-radius: 6px;
@@ -38,20 +38,19 @@
     height: 220px;
     text-align: center;
     margin-right: 10px;
-    cursor: pointer;
 }
 
-.flashRestoreButton {
-    position: relative;
-    width: 265px;
-    border-radius: 6px;
-    border: 1px solid #FE5000;
-    display: table-cell;
-    vertical-align: middle;
-    height: 220px;
-    text-align: center;
-    margin-right: 10px;
-}
+// .flashRestoreButton {
+//     position: relative;
+//     width: 265px;
+//     border-radius: 6px;
+//     border: 1px solid #FE5000;
+//     display: table-cell;
+//     vertical-align: middle;
+//     height: 220px;
+//     text-align: center;
+//     margin-right: 10px;
+// }
 .material-icons {
     color: #FE5000;
     position: absolute;
@@ -61,7 +60,7 @@
     font-size: 20px;
 }
 
-.flashArrayButton:hover {
+.flashRestoreButton:hover, .flashArrayButton:hover, .flashBladeButton:hover {
     position: relative;
     width: 265px;
     border-radius: 6px;
@@ -73,17 +72,18 @@
     text-align: center
 }
 
-.flashArrayButton .image {
-    content: url('../../assets/images/flasharray-normal-logo.png');
-    margin: auto;
-}
+// .flashArrayButton .image {
+//     content: url('../../assets/images/flasharray-normal-logo.png');
+//     margin: auto;
+// }
 
-.flashArrayButton:hover .image {
+.flashArrayButton:hover img {
     content: url('../../assets/images/flasharray-hover-logo.png');
     margin: auto;
 }
 
-.flashArrayButton:hover .material-icons {
+.flashArrayButton:hover .material-icons, .flashRestoreButton:hover .material-icons,
+.flashBladeButton:hover .material-icons {
     color: #fff !important;
     position: absolute;
     right: 20px;
@@ -92,35 +92,41 @@
     font-size: 20px;
 }
 
-.flashRestoreButton:hover {
-    position: relative;
-    width: 265px;
-    border-radius: 6px;
-    border: 1px solid #FE5000;
-    background: #FE5000;
-    display: table-cell;
-    vertical-align: middle;
-    height: 220px;
-    text-align: center
-}
 
-.flashRestoreButton .image {
-    content: url('../../assets/images/pure-flashrecover-logo.png');
-    margin: auto;
-}
+// .flashRestoreButton:hover {
+//     position: relative;
+//     width: 265px;
+//     border-radius: 6px;
+//     border: 1px solid #FE5000;
+//     background: #FE5000;
+//     display: table-cell;
+//     vertical-align: middle;
+//     height: 220px;
+//     text-align: center
+// }
 
-.flashRestoreButton:hover .image {
+// .flashRestoreButton .image {
+//     content: url('../../assets/images/pure-flashrecover-logo.png');
+//     margin: auto;
+// }
+
+.flashRestoreButton:hover img {
     content: url('../../assets/images/pure-flashrecover-cohesity-Logo-hover.png');
     margin: auto;
 }
 
-.flashRestoreButton:hover .material-icons {
-    color: #fff !important;
-    position: absolute;
-    right: 20px;
-    bottom: 10px;
-    transform: rotate(0deg);
-    font-size: 20px;
+// .flashRestoreButton:hover .material-icons {
+//     color: #fff !important;
+//     position: absolute;
+//     right: 20px;
+//     bottom: 10px;
+//     transform: rotate(0deg);
+//     font-size: 20px;
+// }
+
+.dropdown img{
+    padding-right: 2px;
+    padding-bottom: 3px;
 }
 
 .tileWrapper {
@@ -128,4 +134,90 @@
     justify-content: space-evenly;
     height: calc(100vh - 50px);
     align-items: center;
+}
+
+.brand_version {
+    font-size: 11px;
+}
+
+.header-icons img {
+    cursor: pointer;
+}
+
+.header-icons span.dropdown {
+    text-decoration: none !important;
+    position: relative;
+    top: 3px;
+}
+
+.header-icons .material-icons {
+    margin-right: 8px;
+    font-size: 18px;
+    color: #fd7800;
+}
+
+.header-icons a {
+    text-decoration: none !important;
+    top: 8px;
+}
+
+.icon-caption {
+    color: #fff;
+    font-size: 12px;
+}
+
+.disable_icons img, .disable_icons div {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.fa-ellipsis-v {
+    color: #fff;
+    padding: 20px 15px;
+    line-height: 10px;
+    font-size: 14px;
+}
+
+.dropdown-menu {
+    left: -25px !important;
+    padding: 0px;
+    top: 25px !important;
+    transform: unset !important;
+    background: #fff;
+    max-width: 100px;
+    min-width: 100px;
+    border-radius: 3PX;
+}
+
+.userInfo{
+font-size: 14px;
+color: #fff;
+}
+
+.dropdown-menu a img {
+    margin-right: 5px;
+    position: relative;
+    top: -2px;
+}
+
+.dropdown-menu a:last-child {
+    border-bottom: 0px;
+}
+
+.dropdown .dropdown-menu .dropdown-item {
+    padding: 8px 12px;
+    font-size: 13px;
+    text-align: left;
+    color: black;
+}
+
+.head-dropdown {
+    top: -10px !important;
+}
+
+.userFirstName {
+    color: #fff;
+    position: relative;
+    font-size: 11px;
+    top: -1px;
 }
