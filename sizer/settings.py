@@ -88,7 +88,7 @@ else:
     CLIENT_ID = "0oa1i20ucvrIJrham1d8"
     REDIRECT_URL = "https%3A%2F%2Fdev%2Dfa%2Dsizer%2Esalestools%2Epurestorage%2Ecom%2Flanding%2Flogin%2Fokta"
     APP_URL = "https://purestorage.okta.com/oauth2/v1"
-    LOGOUT_REDIRECT_ADDR = "https://dev-fa-sizer.salestools.purestorage.com/#/login"
+    LOGOUT_REDIRECT_ADDR = "https://dev-fa-sizer.salestools.purestorage.com/landing/#/login"
     SERVER_ADDRESS = "dev-fa-sizer.salestools.purestorage.com"
     PORT = "443"
 

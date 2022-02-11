@@ -94,6 +94,7 @@ class BaseView(APIView):
     def __init__(self):
 
         super().__init__()
+
         self.username = 'default'
         self.role = 'user'
         self.platform = Constants.LOCAL
@@ -114,7 +115,7 @@ class BaseView(APIView):
         if settings.DEV_SIZER:
             self.username = 'admin'
             self.role = 'admin'
-            self.platform = 'local'
+            self.platform = 'okta'
             self.user_email = 'admin@purestorage.com'
 
         elif not user_data:
@@ -122,7 +123,6 @@ class BaseView(APIView):
 
         else:
             user_data = signing.loads(user_data)
-            token = user_data[Constants.ACCESS_TOKEN]
             username = user_data[Constants.USERNAME]
 
             if user_data[Constants.PLATFORM] == Constants.OKTA:
@@ -131,38 +131,20 @@ class BaseView(APIView):
                     user = User.objects.get(username=username, platform=Constants.OKTA)
                     if (datetime.now(user.expire_time.tzinfo) - user.expire_time).total_seconds() > 0:
                         raise TokenExpired
-
                 except ObjectDoesNotExist as ex:
                     raise TokenExpired from ex
 
-                token_valid_res = utils.validate_token(token)
-
-                if not token_valid_res.json().get(Constants.ACTIVE):
-                    raise TokenExpired
-
             else:
                 try:
-                    # user = User.objects.filter(username=username, platform='local')
                     user = User.objects.get(username=username, platform=Constants.LOCAL)
-
                     if (datetime.now(user.expire_time.tzinfo) - user.expire_time).total_seconds() > 0:
                         raise TokenExpired
-
                 except ObjectDoesNotExist as ex:
                     raise TokenExpired from ex
 
             self.username = user_data[Constants.USERNAME]
             self.role = user_data[Constants.ROLE]
             self.platform = user_data[Constants.PLATFORM]
-
-
-# class LoginAuthView(APIView):
-#     '''
-#     return the redirect url for local login
-#     '''
-
-#     def get(self, request):
-#         return Response({'redirect_url': 'localhost:8080'})
 
 
 class OktaAuthView(APIView):
@@ -179,7 +161,7 @@ class OktaAuthView(APIView):
             username = 'admin'
             access_token = 'abcd'
             id_token = 'wxyz'
-            seconds = 60000
+            seconds = Constants.COOKIE_DURATION_SECONDS
         else:
             if not request.GET.get(Constants.CODE, ''):
                 dev_params, code_c = utils.save_dev_params()
@@ -189,8 +171,8 @@ class OktaAuthView(APIView):
 
             code = request.GET.get(Constants.CODE, '')
             state = request.GET.get(Constants.STATE, '')
-            logger.info('\nReceived code: {}\n'.format(code))
-            logger.info('\nReceived state: {}\n'.format(state))
+            # logger.info('\nReceived code: {}\n'.format(code))
+            # logger.info('\nReceived state: {}\n'.format(state))
 
             valid, code_v_ret = utils.check_state(state)
 
@@ -199,7 +181,7 @@ class OktaAuthView(APIView):
                 raise ValidationError(Constants.OKTA)
 
             auth_res = utils.get_token(code, code_v_ret)
-            logger.info('\nToken response - {}\n'.format(auth_res.json()))
+            # logger.info('\nToken response - {}\n'.format(auth_res.json()))
 
             if not auth_res.json().get(Constants.ACCESS_TOKEN):
                 logger.info('No Access Token Received')
@@ -213,7 +195,6 @@ class OktaAuthView(APIView):
             logger.info('\nIntrospect response - {}\n'.format(token_valid_res.json()))
 
             if not token_valid_res.json().get(Constants.ACTIVE):
-                # TODO: Update url later
                 raise ValidationError(Constants.OKTA)
 
             username = token_valid_res.json().get(Constants.USERNAME)
@@ -224,7 +205,8 @@ class OktaAuthView(APIView):
 
         except ObjectDoesNotExist:
             user = create_okta_user(username, access_token, id_token, seconds)
-
+            logger.info(model_to_dict(user))
+            user.save()
             # Give access to fa-sizer by default
             try:
                 AppAccess.objects.get(username=username, app=Constants.FA_SIZER)
@@ -232,9 +214,6 @@ class OktaAuthView(APIView):
                 logger.error('No app access for user {}. Created entry'.format(username))
                 app_access = AppAccess.objects.create(username=username, app=Constants.FA_SIZER)
                 app_access.save()
-
-        logger.info(model_to_dict(user))
-        user.save()
 
         user_data = {
             'username': user.username,
@@ -274,7 +253,7 @@ class AuthZeroView(APIView):
             username = 'admin'
             access_token = 'abcd'
             id_token = 'wxyz'
-            seconds = 60000
+            seconds = Constants.COOKIE_DURATION_SECONDS
         else:
             if not request.GET.get(Constants.CODE, ''):
                 dev_params, code_c = utils.save_dev_params()
@@ -284,8 +263,8 @@ class AuthZeroView(APIView):
 
             code = request.GET.get(Constants.CODE, '')
             state = request.GET.get(Constants.STATE, '')
-            logger.info('\nReceived code: {}\n'.format(code))
-            logger.info('\nReceived state: {}\n'.format(state))
+            # logger.info('\nReceived code: {}\n'.format(code))
+            # logger.info('\nReceived state: {}\n'.format(state))
 
             valid, code_v_ret = utils.check_state(state)
 
@@ -295,7 +274,7 @@ class AuthZeroView(APIView):
 
             token_response = utils.authzero_get_token(code, code_v_ret)
 
-            logger.info('\nToken response - {}\n'.format(token_response.json()))
+            # logger.info('\nToken response - {}\n'.format(token_response.json()))
 
             if not token_response.json().get(Constants.ACCESS_TOKEN):
                 logger.info('No Access Token Received')
@@ -308,7 +287,7 @@ class AuthZeroView(APIView):
             # introspect_response = utils.introspect_token(access_token)
             userinfo_response = utils.get_userinfo(access_token)
 
-            # logger.info('\nUserinfo response - {}\n'.format(userinfo_response.content))
+            logger.info('\nUserinfo response - {}\n'.format(userinfo_response.content))
 
             if not userinfo_response.ok:
                 return Response({'status': 'error',
@@ -522,14 +501,16 @@ class LocalAuthView(LoginAuthView):
         return response
 
 
-class LogoutViews(APIView):
+class LogOutViews(BaseView):
     """
     clear the browser cookie and redirect user to login page
     """
 
     def post(self, request):
+
         response = HttpResponseRedirect(settings.LOGOUT_REDIRECT_ADDR)
         response.delete_cookie(Constants.USER_DATA)
+
         return response
 
 
@@ -539,10 +520,29 @@ class GetVersion(BaseView):
 
 
 class GetUserDetail(BaseView):
-    def get(self, _):
-        return Response({'name': self.username,
-                         'role': self.role,
-                         'platform': self.platform}, status=status.HTTP_200_OK)
+
+    def get(self, request, *args, **kwargs):
+        # user_data = request.COOKIES.get('user_data', None)
+        # user_data = signing.loads(user_data)
+        # Get the apps that the logged in user can access
+
+        data = dict()
+
+        data['username'] = self.username
+        data['role'] = self.role
+        data['platform'] = self.platform
+
+        data['apps'] = list()
+
+        for app_obj in AppAccess.objects.filter(username=self.username):
+            data['apps'].append({
+                'app_name': app_obj.app,
+                'url': settings.APP_URLS[app_obj.app],
+                'app_role': app_obj.app_role
+            })
+
+        return Response({'status': 'success',
+                         'data': data}, status=status.HTTP_200_OK)
 
 # class WorkloadDetail(BaseView):
 #     def get(self, _):
