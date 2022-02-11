@@ -3,13 +3,13 @@ import binascii
 import hashlib
 import os
 import secrets
+from logging import getLogger
 
 import requests
 
 from sizer import settings
 from .models import DevParams
 
-from logging import getLogger
 logger = getLogger(__name__)
 
 # POST_URL = (
@@ -126,7 +126,7 @@ def authzero_authorize_url(hex_code, code_c):
 
 def authzero_get_token(code, code_verifier):
     """
-    Get token from OKTA
+    Get token from auth0
     :param code: string, code that is used to get access token
     :param code_verifier: string, code that is used to get access token
     :return auth_res: authentication result, has token if success
@@ -161,10 +161,19 @@ def introspect_token(token):
             "token": token,
             "token_type_hint": "access_token",
             "client_id": settings.AUTHZERO_CLIENT_ID,
-        },
-    )
+        })
 
     return introspect_response
+
+
+def get_userinfo(access_token):
+    userinfo_response = requests.post(f"{settings.AUTHZERO_USERINFO_URL}?",
+                                      headers={"accept": "application/json", "cache-control": "no-cache",
+                                               "content-type": "application/x-www-form-urlencoded"},
+                                      data={"token": access_token, "token_type_hint": "access_token",
+                                            "client_id": settings.AUTHZERO_CLIENT_ID})
+
+    return userinfo_response
 
 
 if __name__ == "__main__":

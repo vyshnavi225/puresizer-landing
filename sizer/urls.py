@@ -35,8 +35,5 @@ urlpatterns = [
     re_path(r'^userinfo', GetUserDetail.as_view()),
     re_path(r'^version', GetVersion.as_view()),
     # re_path(r'^accept', AcceptDisclaimer.as_view()),
-    path(r'', lambda r: HttpResponseRedirect('/landing-app/index.html')),
-    # path(r'', lambda r: HttpResponseRedirect('/index.html')),
-    # re_path(r'^(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT})
-
+    path(r'', lambda r: HttpResponseRedirect('/landing-static/index.html')),
 ]

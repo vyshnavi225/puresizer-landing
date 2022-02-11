@@ -63,9 +63,9 @@ DEV_ENVIRONMENT = os.environ.get("DEV_SIZER", "no")
 APP_LIST = ['fa-sizer', 'fb-sizer', 'fr-sizer']
 
 APP_URLS = {
-    'fa-sizer': 'https://dev.salestools.purestorage.com/fa-sizer',
-    'fb-sizer': 'https://dev.salestools.purestorage.com/fb-sizer',
-    'fr-sizer': 'https://dev.salestools.purestorage.com/fr-sizer'
+    'fa-sizer': 'https://dev-fa-sizer.salestools.purestorage.com/fa-sizer',
+    'fb-sizer': 'https://dev-fa-sizer.salestools.purestorage.com/fb-sizer',
+    'fr-sizer': 'https://dev-fa-sizer.salestools.purestorage.com/fr-sizer'
 }
 
 if DEV_ENVIRONMENT == "yes":
@@ -92,21 +92,12 @@ else:
     SERVER_ADDRESS = "dev-fa-sizer.salestools.purestorage.com"
     PORT = "443"
 
-    AUTHZERO_AUTHORIZE_URL = 'https://authportal-web-external.staging-cloud-support.purestorage.com/sso/oauth2/authorize'
-    AUTHZERO_TOKEN_URL = 'https://authportal-web-external.staging-cloud-support.purestorage.com/oauth/token'
     AUTHZERO_CLIENT_ID = 'Dca9g7W8P8kNoyIeSDDZumAD7lhOjvIJ'
     AUTHZERO_CLIENT_SECRET = 'kKnuRo-p-KgBadpgHd1Kn2fSL_dNzX8NTfg_nnLbdRXX-ShuUdQ83RMMthEubOdS'
     AUTHZERO_REDIRECT_URI = 'https%3A%2F%2Fdev-fa-sizer.salestools.purestorage.com%2Flanding%2Flogin%2Fauthzero'
-
-# POST_URL = (
-#     f"{APP_URL}/authorize?client_id={CLIENT_ID}&response_type="
-#     f"code&scope=openid&redirect_uri={REDIRECT_URL}&state=state-"
-# )
-# stage server shuoj account
-# APP_URL = 'https://dev-601430.okta.com/oauth2/default/v1'
-# CLIENT_ID = '0oa1v4ep2uweJ3LbE357'
-# REDIRECT_URL = 'http%3A%2F%2F10%2E81%2E1%2E225%3A8000%2Flogin%2Fokta'
-# CLIENT_SECRET = 'qxnRWEF8GNITek6P2NiA08d_4uSK2EnnGdnm0i3p'
+    AUTHZERO_AUTHORIZE_URL = 'https://authportal-web-external.staging-cloud-support.purestorage.com/sso/oauth2/authorize'
+    AUTHZERO_TOKEN_URL = 'https://authportal-web-external.staging-cloud-support.purestorage.com/oauth/token'
+    AUTHZERO_USERINFO_URL = 'https://staging-purestorage.auth0.com/userinfo'
 
 if DEV_SIZER:
     ROOT_URLCONF = "sizer.dev_header_url"
@@ -178,14 +169,14 @@ USE_L10N = True
 
 USE_TZ = True
 
-UI_ROOT = os.path.join(BASE_DIR, "sizer/webapps/dist/landing-app/")
+UI_ROOT = os.path.join(BASE_DIR, "sizer/webapps/dist/landing-static/")
 UI_URL = "ui/"
 STATICFILES_DIRS = (UI_ROOT,)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "report/")
 
-STATIC_URL = "landing-app/"
-# STATIC_ROOT = os.path.join(BASE_DIR, "sizer/webapps/dist/landing-app/")
+STATIC_URL = "/landing-static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 LOGGING = {
     "version": 1,
