@@ -11,7 +11,8 @@ import { AutoDestroyable } from '../service/common-behaviors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LandingComponent extends AutoDestroyable implements OnInit {
-  landingResult = [];
+  landingResult: any;
+
   constructor(private router: Router,
     private authenticationService: AuthenticationService,
     private cdr: ChangeDetectorRef) {
@@ -27,7 +28,7 @@ export class LandingComponent extends AutoDestroyable implements OnInit {
         this.cdr.detectChanges();
       }),
     ).subscribe(res => {
-      this.landingResult = res.data.apps;
+      this.landingResult = res.data;
     });
   }
 

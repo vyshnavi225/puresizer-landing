@@ -10,7 +10,7 @@ export const APP_DATA_KEYS = {
   USER_INFO: 'user_info',
   SELECTED_WORKLOAD_DATA: 'selected_workload_data',
   HAS_UNAUTHORIZED_ERROR: 'has_unauthorized_error',
-  BASE_HREF: 'landing'
+  BASE_HREF: 'landing-app'
 };
 
 @Injectable()

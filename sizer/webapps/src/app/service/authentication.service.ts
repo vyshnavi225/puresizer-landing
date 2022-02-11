@@ -32,7 +32,7 @@ export class AuthenticationService extends RestService {
   }*/
 
   oktaLogin(): Observable<any> {
-    const url = `${this.baseUrl}/login/okta`;
+    const url = `${this.baseUrl}/landing/login/authzero`;
     return this.post({url}, null, null, 'OKTA_LOGIN');
   }
 
