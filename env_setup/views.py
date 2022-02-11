@@ -213,8 +213,8 @@ class OktaAuthView(APIView):
             logger.info('\nIntrospect response - {}\n'.format(token_valid_res.json()))
 
             if not token_valid_res.json().get(Constants.ACTIVE):
-                # TODO Update url later
-                return HttpResponse('Introspection of token failed. <a href="https://dev-fa-sizer.salestools.purestorage.com/landing/login/okta">Click here to retry.</a>')
+                # TODO: Update url later
+                raise ValidationError(Constants.OKTA)
 
             username = token_valid_res.json().get(Constants.USERNAME)
 
@@ -243,8 +243,7 @@ class OktaAuthView(APIView):
             'role': user.role,
         }
 
-        response = HttpResponseRedirect('/landing-app/index.html')
-        # response = HttpResponseRedirect('/index.html')
+        response = HttpResponseRedirect('/landing-static/index.html')
         response.set_cookie(Constants.USER_DATA, signing.dumps(user_data), httponly=True, max_age=60000)
 
         return response
@@ -304,18 +303,18 @@ class AuthZeroView(APIView):
 
             access_token = token_response.json()[Constants.ACCESS_TOKEN]
             id_token = token_response.json()[Constants.ID_TOKEN]
-            seconds = 60000
+            seconds = Constants.COOKIE_DURATION_SECONDS
 
-            # TODO - Introspect here
-            introspect_response = utils.introspect_token(access_token)
+            # introspect_response = utils.introspect_token(access_token)
+            userinfo_response = utils.get_userinfo(access_token)
 
-            logger.info('\nIntrospect response - {}\n'.format(introspect_response.json()))
+            logger.info('\nUserinfo response - {}\n'.format(userinfo_response.json()))
 
-            if not introspect_response.json().get(Constants.ACTIVE):
-                # TODO Update url later
-                return HttpResponse('Introspection of token failed. <a href="https://dev-fa-sizer.salestools.purestorage.com/landing/login/authzero">Click here to retry.</a>')
+            if not userinfo_response.json().get(Constants.ACTIVE):
+                return Response({'status': 'error',
+                                 'data': userinfo_response.json()}, status=status.HTTP_400_BAD_REQUEST)
 
-            username = introspect_response.json().get(Constants.USERNAME)
+            username = userinfo_response.json().get(Constants.USERNAME)
 
         try:
             user = User.objects.get(username=username, platform=Constants.OKTA)
