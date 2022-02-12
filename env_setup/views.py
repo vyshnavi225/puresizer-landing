@@ -89,6 +89,37 @@ def create_okta_user(username, access_token, id_token, seconds):
     return user
 
 
+def create_update_user(username, access_token, id_token, seconds):
+    """
+    Create or update user, if created then give access to f-sizer only at first
+    @param username: username
+    @param access_token: username
+    @param id_token: id_token
+    @param seconds: seconds
+    @return: User object having updated details
+    """
+
+    try:
+        user = User.objects.get(username=username, platform=Constants.OKTA)
+        user = update_okta_user(user, access_token, seconds)
+        logger.info(model_to_dict(user))
+        user.save()
+
+    except ObjectDoesNotExist:
+        user = create_okta_user(username, access_token, id_token, seconds)
+        logger.info(model_to_dict(user))
+        user.save()
+        # Give access to fa-sizer by default
+        try:
+            AppAccess.objects.get(username=username, app=Constants.FA_SIZER)
+        except ObjectDoesNotExist:
+            logger.error('No app access for user {}. Created entry'.format(username))
+            app_access = AppAccess.objects.create(username=username, app=Constants.FA_SIZER)
+            app_access.save()
+
+    return user
+
+
 class BaseView(APIView):
 
     def __init__(self):
@@ -199,21 +230,7 @@ class OktaAuthView(APIView):
 
             username = token_valid_res.json().get(Constants.USERNAME)
 
-        try:
-            user = User.objects.get(username=username, platform=Constants.OKTA)
-            user = update_okta_user(user, access_token, seconds)
-
-        except ObjectDoesNotExist:
-            user = create_okta_user(username, access_token, id_token, seconds)
-            logger.info(model_to_dict(user))
-            user.save()
-            # Give access to fa-sizer by default
-            try:
-                AppAccess.objects.get(username=username, app=Constants.FA_SIZER)
-            except ObjectDoesNotExist:
-                logger.error('No app access for user {}. Created entry'.format(username))
-                app_access = AppAccess.objects.create(username=username, app=Constants.FA_SIZER)
-                app_access.save()
+        user = create_update_user(username, access_token, id_token, seconds)
 
         user_data = {
             'username': user.username,
@@ -300,22 +317,7 @@ class AuthZeroView(APIView):
                 return Response({'status': 'error',
                                  'data': userinfo_response.content}, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            user = User.objects.get(username=username, platform=Constants.OKTA)
-            user = update_okta_user(user, access_token, seconds)
-
-        except ObjectDoesNotExist:
-            user = create_okta_user(username, access_token, id_token, seconds)
-            logger.info(model_to_dict(user))
-            user.save()
-
-            # Give access to fa-sizer by default
-            try:
-                AppAccess.objects.get(username=username, app=Constants.FA_SIZER)
-            except ObjectDoesNotExist:
-                logger.error('No app access for user {}. Created entry.'.format(username))
-                app_access = AppAccess.objects.create(username=username, app=Constants.FA_SIZER)
-                app_access.save()
+        user = create_update_user(username, access_token, id_token, seconds)
 
         user_data = {
             'username': user.username,
@@ -346,13 +348,16 @@ class AppAccessAPI(BaseView):
         data['platform'] = self.platform
 
         data['apps'] = list()
+        app_list = list()
 
         for app_obj in AppAccess.objects.filter(username=self.username):
-            data['apps'].append({
+            app_list.append({
                 'app_name': app_obj.app,
                 'url': settings.APP_URLS[app_obj.app],
                 'app_role': app_obj.app_role
             })
+
+        data['apps'] = sorted(app_list, key=lambda app_dict: app_dict['app_name'])
 
         return Response({'status': 'success',
                          'data': data}, status=status.HTTP_200_OK)
@@ -522,6 +527,7 @@ class GetVersion(BaseView):
 class GetUserDetail(BaseView):
 
     def get(self, request, *args, **kwargs):
+
         # user_data = request.COOKIES.get('user_data', None)
         # user_data = signing.loads(user_data)
         # Get the apps that the logged in user can access
@@ -533,13 +539,16 @@ class GetUserDetail(BaseView):
         data['platform'] = self.platform
 
         data['apps'] = list()
+        app_list = list()
 
         for app_obj in AppAccess.objects.filter(username=self.username):
-            data['apps'].append({
+            app_list.append({
                 'app_name': app_obj.app,
                 'url': settings.APP_URLS[app_obj.app],
                 'app_role': app_obj.app_role
             })
+
+        data['apps'] = sorted(app_list, key=lambda app_dict: app_dict['app_name'])
 
         return Response({'status': 'success',
                          'data': data}, status=status.HTTP_200_OK)

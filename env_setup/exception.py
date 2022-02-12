@@ -13,7 +13,7 @@ class ValidationError(Exception):
 
 class TokenExpired(Exception):
     def __init__(self):
-        msg = f"""You are not logged in. Try logging back into the application via \
-              <a href='{settings.SERVER_ADDRESS}:{settings.PORT}/login'> portal"""
+        msg = f"""You are not logged in. Try logging back into the application via <a href='{settings.SERVER_ADDRESS}:
+        {settings.PORT}/login'> portal """
         self.message = msg
         super(TokenExpired, self).__init__(msg)

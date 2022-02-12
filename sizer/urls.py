@@ -26,7 +26,7 @@ from . import settings
 urlpatterns = [
 
     path('admin', lambda r: HttpResponseRedirect('/landing-app/index.html')),
-    # path('login', LogOutViews.as_view()),
+    path('login', LogOutViews.as_view()),
     path('login/local', LocalAuthView.as_view()),
     path('login/okta', OktaAuthView.as_view()),
     path('login/authzero', AuthZeroView.as_view()),

@@ -30,7 +30,7 @@ def save_dev_params():
     code_c = encode_verifier(code_v)
     dev_param.code_verifier = code_v
     dev_param.save()
-    logger.info("state %s has been saved" % dev_param.params)
+    # logger.info("state %s has been saved" % dev_param.params)
     return dev_param, code_c
 
 
@@ -58,11 +58,11 @@ def get_token(code, code_verifier):
     :param code: string, code that is used to get access token
     :return auth_res: authentication result, has token if success
     """
-    logger.info(code)
-    logger.info(set(code))
-    logger.info(settings.CLIENT_ID)
+    # logger.info(code)
+    # logger.info(set(code))
+    # logger.info(settings.CLIENT_ID)
     data = f"""grant_type=authorization_code&client_id={settings.CLIENT_ID}&redirect_uri={settings.REDIRECT_URL}&code={code}&code_verifier={code_verifier}"""
-    logger.info(data)
+    # logger.info(data)
     auth_res = requests.post(
         f"{settings.APP_URL}/token",
         data=data,
@@ -133,7 +133,7 @@ def authzero_get_token(code, code_verifier):
     """
 
     data = f'grant_type=authorization_code&client_id={settings.AUTHZERO_CLIENT_ID}&client_secret={settings.AUTHZERO_CLIENT_SECRET}&redirect_uri={settings.AUTHZERO_REDIRECT_URI}&code={code}&code_verifier={code_verifier}'
-    logger.info(data)
+    # logger.info(data)
     token_response = requests.post(
         f"{settings.AUTHZERO_TOKEN_URL}?",
         data=data,
