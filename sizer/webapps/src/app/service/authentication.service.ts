@@ -10,7 +10,7 @@ import { ApplicationDataService, APP_DATA_KEYS } from '../../shared/services/app
 @Injectable()
 export class AuthenticationService extends RestService {
 
-  protected baseUrl = environment.http.baseUrl;
+  protected baseUrl = environment.http.baseUrl + '/landing';
   protected queryName = 'AUTHENTICATION';
   protected ajaxLoaderEnabled = true;
 
@@ -32,8 +32,8 @@ export class AuthenticationService extends RestService {
   }*/
 
   oktaLogin(): Observable<any> {
-    const url = `${this.baseUrl}/landing/login/authzero`;
-    return this.post({url}, null, null, 'OKTA_LOGIN');
+    const url = `${this.baseUrl}/login/authzero`;
+    return this.get({url}, null, 'OKTA_LOGIN');
   }
 
   /*logout(): Observable<any> {
@@ -50,22 +50,11 @@ export class AuthenticationService extends RestService {
     this.router.navigate(['/login']);
   }
 
-
-
   getLandingInfo() {
-    const url = `${this.baseUrl}/landing/appaccess`;
+    const url = `${this.baseUrl}/appaccess`;
     return this.get({url}, null, '');
   }
 
-  // postProjectDetails(){
-  //   let payload = 
-  //     {
-  //       "username": 'admin',
-  //       "app": 'fa-sizer'
-  //     }
-  //   const url = `${this.baseUrl}/landing/appaccess`;
-  //   return this.save({url}, null, payload, '');
-  // }
   private clearApplicationData() {
     this.applicationDataService.deleteAppData();
     this.applicationDataService.deleteStorageData();
