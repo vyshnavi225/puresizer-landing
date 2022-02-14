@@ -60,13 +60,17 @@ MIDDLEWARE = [
 
 DEV_ENVIRONMENT = os.environ.get("DEV_SIZER", "no")
 
-APP_LIST = ['fa-sizer', 'fb-sizer', 'fr-sizer']
-
-APP_URLS = {
-    'fa-sizer': 'https://dev-fa-sizer.salestools.purestorage.com/fa-sizer',
-    'fb-sizer': 'https://dev-fa-sizer.salestools.purestorage.com/fb-sizer',
-    'fr-sizer': 'https://dev-fa-sizer.salestools.purestorage.com/fr-sizer'
+APP_DATA = {
+    'fa-sizer': {'app_url': 'https://dev-fa-sizer.salestools.purestorage.com/fa-sizer',
+                 'app_name': 'PureStorage FlashArray'},
+    'fb-sizer': {'app_url': 'https://dev-fa-sizer.salestools.purestorage.com/fb-sizer',
+                 'app_name': 'PureStorage FlashBlade'},
+    'fr-sizer': {'app_url': 'https://dev-fa-sizer.salestools.purestorage.com/fr-sizer',
+                 'app_name': 'PureStorage FlashRestore'}
 }
+
+APP_LIST = list(APP_DATA.keys())
+ACCESS_LIST = ['', 'admin']
 
 if DEV_ENVIRONMENT == "yes":
     CORS_ORIGIN_ALLOW_ALL = True

@@ -33,7 +33,7 @@ urlpatterns = [
     path('appaccess', AppAccessAPI.as_view()),
     path('userinfo', GetUserDetail.as_view()),
     path('logout', LogOutViews.as_view()),
-    re_path(r'^version', GetVersion.as_view()),
+    path('version', GetVersion.as_view()),
     # re_path(r'^accept', AcceptDisclaimer.as_view()),
     path(r'', lambda r: HttpResponseRedirect('/landing-static/index.html')),
 ]

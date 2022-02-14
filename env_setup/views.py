@@ -337,40 +337,46 @@ class AppAccessAPI(BaseView):
 
     def get(self, request, *args, **kwargs):
 
-        # user_data = request.COOKIES.get('user_data', None)
-        # user_data = signing.loads(user_data)
-        # Get the apps that the logged in user can access
+        if self.role != Constants.ADMIN:
+            return Response({'status': 'error',
+                             'error_msg': 'You cannot perform this operation.'}, status=status.HTTP_403_FORBIDDEN)
 
-        data = dict()
+        username = request.GET.get(Constants.USERNAME)
 
-        data['username'] = self.username
-        data['role'] = self.role
-        data['platform'] = self.platform
-
-        data['apps'] = list()
+        try:
+            User.objects.get(username=username)
+        except ObjectDoesNotExist as e:
+            logger.error(f'Username does not exist{e}')
+            return Response({'status': 'error',
+                             'error_msg': 'Incorrect username or user does not exist.'},
+                            status=status.HTTP_400_BAD_REQUEST)
         app_list = list()
 
-        for app_obj in AppAccess.objects.filter(username=self.username):
+        for app_obj in AppAccess.objects.filter(username=username):
             app_list.append({
                 'app_name': app_obj.app,
-                'url': settings.APP_URLS[app_obj.app],
                 'app_role': app_obj.app_role
             })
 
-        data['apps'] = sorted(app_list, key=lambda app_dict: app_dict['app_name'])
+        app_list = sorted(app_list, key=lambda app_dict: app_dict['app_name'])
 
         return Response({'status': 'success',
-                         'data': data}, status=status.HTTP_200_OK)
+                         'data': app_list}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
             This gives users access to particular app(s). Can be only performed by admins.
         """
-        data = JSONParser().parse(request)
 
         if self.role != Constants.ADMIN:
             return Response({'status': 'error',
                              'error_msg': 'You cannot perform this operation.'}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            data = JSONParser().parse(request)
+        except Exception as e:
+            logger.error('Error-{}-No data provided.'.format(e))
+            data = {}
 
         serializer = AppAccessSerializer(data=data)
         if not serializer.is_valid():
@@ -379,20 +385,18 @@ class AppAccessAPI(BaseView):
 
         username = serializer.data['username']  # Username of the user to be given access to
         app = serializer.data['app']  # app
+        role = serializer.data.get('app_role', '')  # role
 
         try:
             User.objects.get(username=username)
         except ObjectDoesNotExist as e:
             logger.error(f'Username does not exist{e}')
             return Response({'status': 'error',
-                             'error_msg': 'Username does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+                             'error_msg': 'User does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if len(AppAccess.objects.filter(username=username, app=app)) != 0:
-            return Response({'status': 'error',
-                             'error_msg': 'The user already has access to the app.'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        app_access = AppAccess.objects.create(username=username, app=app)
+        app_access, created = AppAccess.objects.update_or_create(username=username, app=app)
+        app_access.app_role = role
+        logger.info('object created-{}, object-{}'.format(created, app_access))
         app_access.save()
 
         return Response({'status': 'success'}, status=status.HTTP_200_OK)
@@ -403,22 +407,13 @@ class AppAccessAPI(BaseView):
             Response({'status': 'error',
                       'error_msg': 'You cannot perform this operation.'}, status=status.HTTP_403_FORBIDDEN)
 
-        data = dict()
-        data['username'] = request.GET.get('username')
-        data['app'] = request.GET.get('app')
-
-        serializer = AppAccessSerializer(data=data)
-        if not serializer.is_valid():
-            return Response({'status': 'error',
-                             'error_msg': 'Invalid data provided'}, status=status.HTTP_400_BAD_REQUEST)
-
-        username = serializer.data['username']
-        app = serializer.data['app']
+        username = request.GET.get(Constants.USERNAME)
+        app = request.GET.get('app')
 
         try:
             User.objects.get(username=username)
         except ObjectDoesNotExist as e:
-            logger.error(f'Username does not exist{e}')
+            logger.error(f'User does not exist{e}')
             return Response({'status': 'error',
                              'error_msg': 'Username does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -537,14 +532,15 @@ class GetUserDetail(BaseView):
         data['username'] = self.username
         data['role'] = self.role
         data['platform'] = self.platform
-
         data['apps'] = list()
+
         app_list = list()
 
         for app_obj in AppAccess.objects.filter(username=self.username):
             app_list.append({
-                'app_name': app_obj.app,
-                'url': settings.APP_URLS[app_obj.app],
+                'app_id': app_obj.app,
+                'app_name': settings.APP_DATA[app_obj.app]['app_name'],
+                'url': settings.APP_DATA[app_obj.app]['app_url'],
                 'app_role': app_obj.app_role
             })
 
