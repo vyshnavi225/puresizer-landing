@@ -6,4 +6,4 @@ class AppAccessSerializer(serializers.Serializer):
 
     username = serializers.CharField()
     app = serializers.ChoiceField(settings.APP_LIST)
-    app_role = serializers.CharField()
+    app_role = serializers.ChoiceField(settings.ACCESS_LIST)

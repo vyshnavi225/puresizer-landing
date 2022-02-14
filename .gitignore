@@ -15,4 +15,5 @@
 !/env_setup/migrations/__init__.py
 
 #UI
+staticfiles
 package-lock.json

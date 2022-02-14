@@ -60,35 +60,36 @@ MIDDLEWARE = [
 
 DEV_ENVIRONMENT = os.environ.get("DEV_SIZER", "no")
 
-APP_LIST = ['fa-sizer', 'fb-sizer', 'fr-sizer']
-
-APP_URLS = {
-    'fa-sizer': 'https://dev-fa-sizer.salestools.purestorage.com/fa-sizer',
-    'fb-sizer': 'https://dev-fa-sizer.salestools.purestorage.com/fb-sizer',
-    'fr-sizer': 'https://dev-fa-sizer.salestools.purestorage.com/fr-sizer'
+APP_DATA = {
+    'fa-sizer': {'app_url': 'https://dev-fa-sizer.salestools.purestorage.com/fa-sizer',
+                 'app_name': 'PureStorage FlashArray'},
+    'fb-sizer': {'app_url': 'https://dev-fa-sizer.salestools.purestorage.com/fb-sizer',
+                 'app_name': 'PureStorage FlashBlade'},
+    'fr-sizer': {'app_url': 'https://dev-fa-sizer.salestools.purestorage.com/fr-sizer',
+                 'app_name': 'PureStorage FlashRestore'}
 }
+
+APP_LIST = list(APP_DATA.keys())
+ACCESS_LIST = ['', 'admin']
 
 if DEV_ENVIRONMENT == "yes":
     CORS_ORIGIN_ALLOW_ALL = True
     DEV_SIZER = True
 
     CLIENT_ID = "0oa6mvqci6eYzIJq8357"
-    REDIRECT_URL = "http%3A%2F%2F127.0.0.1%3A8001%2Flogin%2Fokta"
+    REDIRECT_URL = "http%3A%2F%2F127.0.0.1%3A8000%2Flanding%2Flogin%2Fauthzero"
     APP_URL = "https://dev-601430.okta.com/oauth2/default/v1"
-
-    LOGIN_REDIRECT_ADDR = "http://127.0.0.1:8000/landing-app/index.html"
-
-    LOGOUT_REDIRECT_ADDR = "http://127.0.0.1:8000/landing/login"
-
+    LOGOUT_REDIRECT_ADDR = "http://127.0.0.1:8000/landing/#/login"
     SERVER_ADDRESS = "127.0.0.1"
     PORT = "8000"
 
 else:
     DEV_SIZER = False
+
     CLIENT_ID = "0oa1i20ucvrIJrham1d8"
     REDIRECT_URL = "https%3A%2F%2Fdev%2Dfa%2Dsizer%2Esalestools%2Epurestorage%2Ecom%2Flanding%2Flogin%2Fokta"
     APP_URL = "https://purestorage.okta.com/oauth2/v1"
-    LOGOUT_REDIRECT_ADDR = "https://dev-fa-sizer.salestools.purestorage.com/#/login"
+    LOGOUT_REDIRECT_ADDR = "https://dev-fa-sizer.salestools.purestorage.com/landing/#/login"
     SERVER_ADDRESS = "dev-fa-sizer.salestools.purestorage.com"
     PORT = "443"
 
@@ -176,7 +177,8 @@ STATICFILES_DIRS = (UI_ROOT,)
 MEDIA_ROOT = os.path.join(BASE_DIR, "report/")
 
 STATIC_URL = "/landing-static/"
-# STATIC_ROOT = os.path.join(BASE_DIR, "sizer/webapps/dist/landing-static/")
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 LOGGING = {
     "version": 1,

@@ -30,6 +30,7 @@ class Constants(object):
     EXPIRES_IN = "expires_in"
     HASH = "hash"
     ISS = "iss"
+    SUB = 'sub'
     COOKIE_DURATION_SECONDS = 60000  # 1000mins or 16.67hrs
 
     # My vars - return key

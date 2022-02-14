@@ -89,11 +89,43 @@ def create_okta_user(username, access_token, id_token, seconds):
     return user
 
 
+def create_update_user(username, access_token, id_token, seconds):
+    """
+    Create or update user, if created then give access to f-sizer only at first
+    @param username: username
+    @param access_token: username
+    @param id_token: id_token
+    @param seconds: seconds
+    @return: User object having updated details
+    """
+
+    try:
+        user = User.objects.get(username=username, platform=Constants.OKTA)
+        user = update_okta_user(user, access_token, seconds)
+        logger.info(model_to_dict(user))
+        user.save()
+
+    except ObjectDoesNotExist:
+        user = create_okta_user(username, access_token, id_token, seconds)
+        logger.info(model_to_dict(user))
+        user.save()
+        # Give access to fa-sizer by default
+        try:
+            AppAccess.objects.get(username=username, app=Constants.FA_SIZER)
+        except ObjectDoesNotExist:
+            logger.error('No app access for user {}. Created entry'.format(username))
+            app_access = AppAccess.objects.create(username=username, app=Constants.FA_SIZER)
+            app_access.save()
+
+    return user
+
+
 class BaseView(APIView):
 
     def __init__(self):
 
         super().__init__()
+
         self.username = 'default'
         self.role = 'user'
         self.platform = Constants.LOCAL
@@ -114,7 +146,7 @@ class BaseView(APIView):
         if settings.DEV_SIZER:
             self.username = 'admin'
             self.role = 'admin'
-            self.platform = 'local'
+            self.platform = 'okta'
             self.user_email = 'admin@purestorage.com'
 
         elif not user_data:
@@ -122,7 +154,6 @@ class BaseView(APIView):
 
         else:
             user_data = signing.loads(user_data)
-            token = user_data[Constants.ACCESS_TOKEN]
             username = user_data[Constants.USERNAME]
 
             if user_data[Constants.PLATFORM] == Constants.OKTA:
@@ -131,38 +162,20 @@ class BaseView(APIView):
                     user = User.objects.get(username=username, platform=Constants.OKTA)
                     if (datetime.now(user.expire_time.tzinfo) - user.expire_time).total_seconds() > 0:
                         raise TokenExpired
-
                 except ObjectDoesNotExist as ex:
                     raise TokenExpired from ex
 
-                token_valid_res = utils.validate_token(token)
-
-                if not token_valid_res.json().get(Constants.ACTIVE):
-                    raise TokenExpired
-
             else:
                 try:
-                    # user = User.objects.filter(username=username, platform='local')
                     user = User.objects.get(username=username, platform=Constants.LOCAL)
-
                     if (datetime.now(user.expire_time.tzinfo) - user.expire_time).total_seconds() > 0:
                         raise TokenExpired
-
                 except ObjectDoesNotExist as ex:
                     raise TokenExpired from ex
 
             self.username = user_data[Constants.USERNAME]
             self.role = user_data[Constants.ROLE]
             self.platform = user_data[Constants.PLATFORM]
-
-
-# class LoginAuthView(APIView):
-#     '''
-#     return the redirect url for local login
-#     '''
-
-#     def get(self, request):
-#         return Response({'redirect_url': 'localhost:8080'})
 
 
 class OktaAuthView(APIView):
@@ -179,7 +192,7 @@ class OktaAuthView(APIView):
             username = 'admin'
             access_token = 'abcd'
             id_token = 'wxyz'
-            seconds = 60000
+            seconds = Constants.COOKIE_DURATION_SECONDS
         else:
             if not request.GET.get(Constants.CODE, ''):
                 dev_params, code_c = utils.save_dev_params()
@@ -189,8 +202,8 @@ class OktaAuthView(APIView):
 
             code = request.GET.get(Constants.CODE, '')
             state = request.GET.get(Constants.STATE, '')
-            logger.info('\nReceived code: {}\n'.format(code))
-            logger.info('\nReceived state: {}\n'.format(state))
+            # logger.info('\nReceived code: {}\n'.format(code))
+            # logger.info('\nReceived state: {}\n'.format(state))
 
             valid, code_v_ret = utils.check_state(state)
 
@@ -199,7 +212,7 @@ class OktaAuthView(APIView):
                 raise ValidationError(Constants.OKTA)
 
             auth_res = utils.get_token(code, code_v_ret)
-            logger.info('\nToken response - {}\n'.format(auth_res.json()))
+            # logger.info('\nToken response - {}\n'.format(auth_res.json()))
 
             if not auth_res.json().get(Constants.ACCESS_TOKEN):
                 logger.info('No Access Token Received')
@@ -213,28 +226,12 @@ class OktaAuthView(APIView):
             logger.info('\nIntrospect response - {}\n'.format(token_valid_res.json()))
 
             if not token_valid_res.json().get(Constants.ACTIVE):
-                # TODO: Update url later
+
                 raise ValidationError(Constants.OKTA)
 
             username = token_valid_res.json().get(Constants.USERNAME)
 
-        try:
-            user = User.objects.get(username=username, platform=Constants.OKTA)
-            user = update_okta_user(user, access_token, seconds)
-
-        except ObjectDoesNotExist:
-            user = create_okta_user(username, access_token, id_token, seconds)
-
-            # Give access to fa-sizer by default
-            try:
-                AppAccess.objects.get(username=username, app=Constants.FA_SIZER)
-            except ObjectDoesNotExist:
-                logger.error('No app access for user {}. Created entry'.format(username))
-                app_access = AppAccess.objects.create(username=username, app=Constants.FA_SIZER)
-                app_access.save()
-
-        logger.info(model_to_dict(user))
-        user.save()
+        user = create_update_user(username, access_token, id_token, seconds)
 
         user_data = {
             'username': user.username,
@@ -274,7 +271,7 @@ class AuthZeroView(APIView):
             username = 'admin'
             access_token = 'abcd'
             id_token = 'wxyz'
-            seconds = 60000
+            seconds = Constants.COOKIE_DURATION_SECONDS
         else:
             if not request.GET.get(Constants.CODE, ''):
                 dev_params, code_c = utils.save_dev_params()
@@ -284,8 +281,8 @@ class AuthZeroView(APIView):
 
             code = request.GET.get(Constants.CODE, '')
             state = request.GET.get(Constants.STATE, '')
-            logger.info('\nReceived code: {}\n'.format(code))
-            logger.info('\nReceived state: {}\n'.format(state))
+            # logger.info('\nReceived code: {}\n'.format(code))
+            # logger.info('\nReceived state: {}\n'.format(state))
 
             valid, code_v_ret = utils.check_state(state)
 
@@ -295,7 +292,7 @@ class AuthZeroView(APIView):
 
             token_response = utils.authzero_get_token(code, code_v_ret)
 
-            logger.info('\nToken response - {}\n'.format(token_response.json()))
+            # logger.info('\nToken response - {}\n'.format(token_response.json()))
 
             if not token_response.json().get(Constants.ACCESS_TOKEN):
                 logger.info('No Access Token Received')
@@ -308,31 +305,21 @@ class AuthZeroView(APIView):
             # introspect_response = utils.introspect_token(access_token)
             userinfo_response = utils.get_userinfo(access_token)
 
-            logger.info('\nUserinfo response - {}\n'.format(userinfo_response.json()))
 
-            if not userinfo_response.json().get(Constants.ACTIVE):
+            logger.info('\nUserinfo response - {}\n'.format(userinfo_response.content))
+
+            if not userinfo_response.ok:
                 return Response({'status': 'error',
-                                 'data': userinfo_response.json()}, status=status.HTTP_400_BAD_REQUEST)
+                                 'data': userinfo_response.content}, status=status.HTTP_401_UNAUTHORIZED)
 
-            username = userinfo_response.json().get(Constants.USERNAME)
-
-        try:
-            user = User.objects.get(username=username, platform=Constants.OKTA)
-            user = update_okta_user(user, access_token, seconds)
-
-        except ObjectDoesNotExist:
-            user = create_okta_user(username, access_token, id_token, seconds)
-
-            # Give access to fa-sizer by default
             try:
-                AppAccess.objects.get(username=username, app=Constants.FA_SIZER)
-            except ObjectDoesNotExist:
-                logger.error('No app access for user {}. Created entry.'.format(username))
-                app_access = AppAccess.objects.create(username=username, app=Constants.FA_SIZER)
-                app_access.save()
+                username = userinfo_response.json().get(Constants.SUB).split('|')[2]
+            except Exception as e:
+                logger.error('Error - {} \nUsername not received or is not formatted properly'.format(e))
+                return Response({'status': 'error',
+                                 'data': userinfo_response.content}, status=status.HTTP_400_BAD_REQUEST)
 
-        logger.info(model_to_dict(user))
-        user.save()
+        user = create_update_user(username, access_token, id_token, seconds)
 
         user_data = {
             'username': user.username,
@@ -341,9 +328,9 @@ class AuthZeroView(APIView):
             'role': user.role,
         }
 
-        response = HttpResponseRedirect('/landing-app/index.html')
-        # response = HttpResponseRedirect('/index.html')
-        response.set_cookie(Constants.USER_DATA, signing.dumps(user_data), httponly=True, max_age=60000)
+        response = HttpResponseRedirect('/landing-static/index.html')
+        response.set_cookie(Constants.USER_DATA, signing.dumps(user_data), httponly=True,
+                            max_age=Constants.COOKIE_DURATION_SECONDS)
 
         return response
 
@@ -352,37 +339,46 @@ class AppAccessAPI(BaseView):
 
     def get(self, request, *args, **kwargs):
 
-        # user_data = request.COOKIES.get('user_data', None)
-        # user_data = signing.loads(user_data)
-        # Get the apps that the logged in user can access
+        if self.role != Constants.ADMIN:
+            return Response({'status': 'error',
+                             'error_msg': 'You cannot perform this operation.'}, status=status.HTTP_403_FORBIDDEN)
 
-        data = dict()
+        username = request.GET.get(Constants.USERNAME)
 
-        data['username'] = self.username
-        data['role'] = self.role
-        data['platform'] = self.platform
+        try:
+            User.objects.get(username=username)
+        except ObjectDoesNotExist as e:
+            logger.error(f'Username does not exist{e}')
+            return Response({'status': 'error',
+                             'error_msg': 'Incorrect username or user does not exist.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        app_list = list()
 
-        data['apps'] = list()
-
-        for app_obj in AppAccess.objects.filter(username=self.username):
-            data['apps'].append({
+        for app_obj in AppAccess.objects.filter(username=username):
+            app_list.append({
                 'app_name': app_obj.app,
-                'url': settings.APP_URLS[app_obj.app],
                 'app_role': app_obj.app_role
             })
 
+        app_list = sorted(app_list, key=lambda app_dict: app_dict['app_name'])
+
         return Response({'status': 'success',
-                         'data': data}, status=status.HTTP_200_OK)
+                         'data': app_list}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         """
             This gives users access to particular app(s). Can be only performed by admins.
         """
-        data = JSONParser().parse(request)
 
         if self.role != Constants.ADMIN:
             return Response({'status': 'error',
                              'error_msg': 'You cannot perform this operation.'}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            data = JSONParser().parse(request)
+        except Exception as e:
+            logger.error('Error-{}-No data provided.'.format(e))
+            data = {}
 
         serializer = AppAccessSerializer(data=data)
         if not serializer.is_valid():
@@ -391,20 +387,18 @@ class AppAccessAPI(BaseView):
 
         username = serializer.data['username']  # Username of the user to be given access to
         app = serializer.data['app']  # app
+        role = serializer.data.get('app_role', '')  # role
 
         try:
             User.objects.get(username=username)
         except ObjectDoesNotExist as e:
             logger.error(f'Username does not exist{e}')
             return Response({'status': 'error',
-                             'error_msg': 'Username does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+                             'error_msg': 'User does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if len(AppAccess.objects.filter(username=username, app=app)) != 0:
-            return Response({'status': 'error',
-                             'error_msg': 'The user already has access to the app.'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        app_access = AppAccess.objects.create(username=username, app=app)
+        app_access, created = AppAccess.objects.update_or_create(username=username, app=app)
+        app_access.app_role = role
+        logger.info('object created-{}, object-{}'.format(created, app_access))
         app_access.save()
 
         return Response({'status': 'success'}, status=status.HTTP_200_OK)
@@ -415,22 +409,13 @@ class AppAccessAPI(BaseView):
             Response({'status': 'error',
                       'error_msg': 'You cannot perform this operation.'}, status=status.HTTP_403_FORBIDDEN)
 
-        data = dict()
-        data['username'] = request.GET.get('username')
-        data['app'] = request.GET.get('app')
-
-        serializer = AppAccessSerializer(data=data)
-        if not serializer.is_valid():
-            return Response({'status': 'error',
-                             'error_msg': 'Invalid data provided'}, status=status.HTTP_400_BAD_REQUEST)
-
-        username = serializer.data['username']
-        app = serializer.data['app']
+        username = request.GET.get(Constants.USERNAME)
+        app = request.GET.get('app')
 
         try:
             User.objects.get(username=username)
         except ObjectDoesNotExist as e:
-            logger.error(f'Username does not exist{e}')
+            logger.error(f'User does not exist{e}')
             return Response({'status': 'error',
                              'error_msg': 'Username does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -518,14 +503,16 @@ class LocalAuthView(LoginAuthView):
         return response
 
 
-class LogoutViews(APIView):
+class LogOutViews(BaseView):
     """
     clear the browser cookie and redirect user to login page
     """
 
     def post(self, request):
+
         response = HttpResponseRedirect(settings.LOGOUT_REDIRECT_ADDR)
         response.delete_cookie(Constants.USER_DATA)
+
         return response
 
 
@@ -535,10 +522,34 @@ class GetVersion(BaseView):
 
 
 class GetUserDetail(BaseView):
-    def get(self, _):
-        return Response({'name': self.username,
-                         'role': self.role,
-                         'platform': self.platform}, status=status.HTTP_200_OK)
+
+    def get(self, request, *args, **kwargs):
+
+        # user_data = request.COOKIES.get('user_data', None)
+        # user_data = signing.loads(user_data)
+        # Get the apps that the logged in user can access
+
+        data = dict()
+
+        data['username'] = self.username
+        data['role'] = self.role
+        data['platform'] = self.platform
+        data['apps'] = list()
+
+        app_list = list()
+
+        for app_obj in AppAccess.objects.filter(username=self.username):
+            app_list.append({
+                'app_id': app_obj.app,
+                'app_name': settings.APP_DATA[app_obj.app]['app_name'],
+                'url': settings.APP_DATA[app_obj.app]['app_url'],
+                'app_role': app_obj.app_role
+            })
+
+        data['apps'] = sorted(app_list, key=lambda app_dict: app_dict['app_name'])
+
+        return Response({'status': 'success',
+                         'data': data}, status=status.HTTP_200_OK)
 
 # class WorkloadDetail(BaseView):
 #     def get(self, _):
