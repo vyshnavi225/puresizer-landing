@@ -333,7 +333,7 @@ class AuthZeroView(APIView):
         return response
 
 
-class AppAccessAPI(BaseView):
+class AppAccessView(BaseView):
 
     def get(self, request, *args, **kwargs):
 
@@ -423,7 +423,7 @@ class AppAccessAPI(BaseView):
     def delete(self, request, *args, **kwargs):
 
         if self.role != Constants.ADMIN:
-            Response({'status': 'error',
+            return Response({'status': 'error',
                       'error_msg': 'You cannot perform this operation.'}, status=status.HTTP_403_FORBIDDEN)
 
         username = request.GET.get(Constants.USERNAME)
@@ -444,6 +444,19 @@ class AppAccessAPI(BaseView):
         AppAccess.objects.filter(username=username, app=app).delete()
 
         return Response({'status': 'success'}, status=status.HTTP_200_OK)
+
+
+class UserListView(BaseView):
+
+    def get(self, request, *args, **kwargs):
+
+        if self.role != Constants.ADMIN:
+            return Response({'status': 'error',
+                             'error_msg': 'You cannot perform this operation.'}, status=status.HTTP_403_FORBIDDEN)
+
+        user_list = User.objects.values_list('username', flat=True).order_by('username')
+
+        return Response({'status': 'success', 'data': user_list}, status=status.HTTP_200_OK)
 
 
 class LoginAuthView(APIView):

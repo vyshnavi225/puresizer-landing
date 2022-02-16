@@ -18,22 +18,23 @@ from django.http import HttpResponseRedirect
 from django.urls import include, path, re_path
 from django.views.static import serve
 
-from env_setup.views import GetUserDetail, GetVersion, LocalAuthView, LogOutViews, OktaAuthView, AppAccessAPI, \
-    AuthZeroView
+from env_setup.views import GetUserDetail, GetVersion, LocalAuthView, LogOutViews, OktaAuthView, AppAccessView, \
+    AuthZeroView, UserListView
 
 from . import settings
 
 urlpatterns = [
 
-    path('admin', lambda r: HttpResponseRedirect('/landing-app/index.html')),
-    path('login', LogOutViews.as_view()),
-    path('login/local', LocalAuthView.as_view()),
+    path('admin', lambda r: HttpResponseRedirect('/landing-static/index.html')),
     path('login/okta', OktaAuthView.as_view()),
     path('login/authzero', AuthZeroView.as_view()),
-    path('appaccess', AppAccessAPI.as_view()),
+    path('appaccess', AppAccessView.as_view()),
+    path('userlist', UserListView.as_view()),
     path('userinfo', GetUserDetail.as_view()),
+    path('login', LogOutViews.as_view()),
     path('logout', LogOutViews.as_view()),
     path('version', GetVersion.as_view()),
-    # re_path(r'^accept', AcceptDisclaimer.as_view()),
-    path(r'', lambda r: HttpResponseRedirect('/landing-static/index.html')),
+    # path('login/local', LocalAuthView.as_view()),
+    # path('accept', AcceptDisclaimer.as_view()),
+    path('', lambda r: HttpResponseRedirect('/landing-static/index.html')),
 ]
