@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from logging import getLogger
 from os import path
 
-from django.conf import settings
 from django.core import signing
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
@@ -21,7 +20,7 @@ from sizer import settings
 from env_setup.exception import TokenExpired, ValidationError
 from .constants import Constants
 from .models import User, AppAccess
-from .serializer import AppAccessSerializer
+from .serializer import AppAccessPOSTSerializer
 
 logger = getLogger(__name__)
 config = configparser.ConfigParser()
@@ -135,6 +134,7 @@ class BaseView(APIView):
         # if settings.LOGIN_EXEMPT_URLS
         request_path = request.path_info.lstrip('/')
         exempts = []
+        # logger.info(request.get_host())
         for url in settings.LOGIN_EXEMPT_URLS:
             exempts.append(re.match(url, request_path))
         if not any(exempts):
@@ -335,7 +335,7 @@ class AuthZeroView(APIView):
         return response
 
 
-class AppAccessAPI(BaseView):
+class AppAccessView(BaseView):
 
     def get(self, request, *args, **kwargs):
 
@@ -354,11 +354,21 @@ class AppAccessAPI(BaseView):
                             status=status.HTTP_400_BAD_REQUEST)
         app_list = list()
 
-        for app_obj in AppAccess.objects.filter(username=username):
-            app_list.append({
-                'app_name': app_obj.app,
-                'app_role': app_obj.app_role
-            })
+        for app in settings.APP_LIST:
+            app_struct = {
+                "app_name": app,
+                "app_access": False,
+                "admin_access": False
+            }
+            for app_obj in AppAccess.objects.filter(username=username):
+                if app_obj.app == app:
+                    app_struct['app_access'] = True
+                    if app_obj.app_role == Constants.ADMIN:
+                        app_struct['admin_access'] = True
+                    app_list.append(app_struct)
+                    break
+            else:
+                app_list.append(app_struct)
 
         app_list = sorted(app_list, key=lambda app_dict: app_dict['app_name'])
 
@@ -380,14 +390,16 @@ class AppAccessAPI(BaseView):
             logger.error('Error-{}-No data provided.'.format(e))
             data = {}
 
-        serializer = AppAccessSerializer(data=data)
-        if not serializer.is_valid():
-            return Response({'status': 'error',
-                             'error_msg': 'Invalid data provided'}, status=status.HTTP_400_BAD_REQUEST)
+        # serializer = AppAccessPOSTSerializer(data=data)
+        # if not serializer.is_valid():
+        #     return Response({'status': 'error',
+        #                      'error_msg': 'Invalid data provided'}, status=status.HTTP_400_BAD_REQUEST)
 
-        username = serializer.data['username']  # Username of the user to be given access to
-        app = serializer.data['app']  # app
-        role = serializer.data.get('app_role', '')  # role
+        # username = serializer.data['username']  # Username of the user to be given access to
+        # app = serializer.data['app_list']  # app
+
+        username = data.get('username')  # Username of the user to be given access to
+        app_list = data.get('app_list', [])  # app
 
         try:
             User.objects.get(username=username)
@@ -396,17 +408,24 @@ class AppAccessAPI(BaseView):
             return Response({'status': 'error',
                              'error_msg': 'User does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        app_access, created = AppAccess.objects.update_or_create(username=username, app=app)
-        app_access.app_role = role
-        logger.info('object created-{}, object-{}'.format(created, app_access))
-        app_access.save()
+        for app_data in app_list:
+            app_name = app_data['app_name']
+            app_access = app_data['app_access']
+            admin_access = app_data['admin_access']
+            if app_access:
+                app_obj, _ = AppAccess.objects.get_or_create(username=username, app=app_name)
+                app_obj.app_role = Constants.ADMIN if admin_access else ''
+                app_obj.save()
+            else:
+                AppAccess.objects.filter(username=username, app=app_name).delete()
 
-        return Response({'status': 'success'}, status=status.HTTP_200_OK)
+        return Response({'status': 'success',
+                         'data': app_list}, status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
 
         if self.role != Constants.ADMIN:
-            Response({'status': 'error',
+            return Response({'status': 'error',
                       'error_msg': 'You cannot perform this operation.'}, status=status.HTTP_403_FORBIDDEN)
 
         username = request.GET.get(Constants.USERNAME)
@@ -427,6 +446,19 @@ class AppAccessAPI(BaseView):
         AppAccess.objects.filter(username=username, app=app).delete()
 
         return Response({'status': 'success'}, status=status.HTTP_200_OK)
+
+
+class UserListView(BaseView):
+
+    def get(self, request, *args, **kwargs):
+
+        if self.role != Constants.ADMIN:
+            return Response({'status': 'error',
+                             'error_msg': 'You cannot perform this operation.'}, status=status.HTTP_403_FORBIDDEN)
+
+        user_list = User.objects.values_list('username', flat=True).order_by('username')
+
+        return Response({'status': 'success', 'data': user_list}, status=status.HTTP_200_OK)
 
 
 class LoginAuthView(APIView):
@@ -525,9 +557,9 @@ class GetUserDetail(BaseView):
 
     def get(self, request, *args, **kwargs):
 
-        # user_data = request.COOKIES.get('user_data', None)
-        # user_data = signing.loads(user_data)
-        # Get the apps that the logged in user can access
+        """
+        Gives userinfo data and access to apps.
+        """
 
         data = dict()
 
